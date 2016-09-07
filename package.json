@@ -1,6 +1,6 @@
 {
   "name": "rabrpc",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "RabbitMQ RPC Library based on Rabbot",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,11 @@
     "coverage": "istanbul cover _mocha"
   },
   "keywords": [
-    "rabbitmq", "microservice", "pubsub", "reqres", "rpc"
+    "rabbitmq",
+    "microservice",
+    "pubsub",
+    "reqres",
+    "rpc"
   ],
   "repository": {
     "type": "git",
