@@ -3,26 +3,21 @@ const rabbot = require('rabbot')
 
 const sinon = require('sinon')
 
-describe('RPC', () => {
+describe('respond', () => {
   before(() => {
-    sinon.stub(rabbot, 'handle').resolves({body: {payload: 42}})
+    sinon.stub(rabbot, 'handle')
   })
   after(() => {
     rabbot.handle.restore()
   })
-  describe('respond', () => {
-    it('should call rabbot request', () => {
-      rpc.request('v1.test.action', 42)
-      expect(rabbot.request).to.have.been.calledOnce
-    })
-    it('should make config for rabbot', () => {
-      rpc.request('v1.test.action', 42)
-      expect(rabbot.request).to.have.been.calledWithMatch('req-res.test', {
-        routingKey: 'test',
-        type: 'v1.test.action',
-        replyTimeout: 10000,
-        body: {payload: 42}
-      })
-    })
+  it('should call rabbot request', () => {
+    rpc.respond('v1.test.action', () => {})
+    expect(rabbot.handle).to.have.been.calledOnce
+  })
+  it('should make config for rabbot', () => {
+    const handler = sinon.spy()
+    rpc.respond('v1.test.action', handler)
+    expect(rabbot.handle).to.have.been.calledWithMatch('v1.test.action')
+    expect(handler).to.have.not.been.called
   })
 })

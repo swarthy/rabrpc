@@ -12,6 +12,11 @@ describe('buildConfig', () => {
     it('should throw error if connection is undefined', () => {
       expect(() => buildConfig({})).to.throw(/connection option is required/)
     })
+    it('should clone connection object', () => {
+      expect(buildConfig({connection: {host: 'localhost'}})).to.be.eql({
+        connection: {host: 'localhost'}, exchanges: [], queues: [], bindings: []
+      })
+    })
     it('should return default cfg for empty config', () => {
       expect(buildConfig(cfg())).to.be.eql({connection: {uri: 'localhost'}, exchanges: [], queues: [], bindings: []})
     })
@@ -58,6 +63,28 @@ describe('buildConfig', () => {
     })
     it('should throw exception if serviceName is no exist', () => {
       expect(() => buildConfig(cfg({res: {limit: 10}}))).to.throw(/serviceName is required/)
+    })
+    it('should process array', () => {
+      expect(buildConfig(cfg({res: ['test1', 'test2']}))).to.be.eql({
+        bindings: [{
+          exchange: 'req-res.test1',
+          target: 'req-res.test1',
+          keys: 'test1'
+        }, {
+          exchange: 'req-res.test2',
+          target: 'req-res.test2',
+          keys: 'test2'
+        }],
+        connection: { uri: 'localhost' },
+        exchanges: [
+          {name: 'req-res.test1', type: 'direct'},
+          {name: 'req-res.test2', type: 'direct'}
+        ],
+        queues: [
+          {name: 'req-res.test1', subscribe: true},
+          {name: 'req-res.test2', subscribe: true}
+        ]
+      })
     })
   })
 })
