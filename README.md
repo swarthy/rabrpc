@@ -132,7 +132,7 @@ rpc.initialize(config)
 .then(() => rpc.request('v1.foo-service-name.someAction', 42))
 .then(([body, actions]) => {
   console.log('response:', body.data) // body = {status: 'succes', data: 84}
-  actions.ack() // let responder know that reponse received (what?)
+  return actions.ack() // let responder know that reponse received (what?)
 })
 
 ```

@@ -31,8 +31,8 @@ describe('RPC', () => {
       expect(rabbot.configure).to.have.been.calledWithMatch({a: 10})
     })
     it('should reject promise on error', () => {
-      rabbot.configure.rejects()
-      expect(rpc.initialize({a: 10}, false)).to.rejected
+      rabbot.configure.rejects(new Error('MOCK ERROR'))
+      expect(rpc.initialize({a: 10}, false)).to.rejectedWith(/MOCK ERROR/)
     })
   })
   describe('shutdown', () => {

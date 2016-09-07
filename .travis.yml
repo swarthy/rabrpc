@@ -2,6 +2,8 @@ sudo: required
 language: node_js
 node_js:
   - "6"
+services:
+  - rabbitmq
 before_install:
   - npm install -g npm
 matrix:
