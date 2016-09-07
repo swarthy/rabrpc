@@ -23,8 +23,13 @@
     "rabbot": "^1.0.5"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
     "eslint": "^3.4.0",
     "eslint-config-inclusive": "^1.0.3",
-    "mocha": "^3.0.2"
+    "mocha": "^3.0.2",
+    "sinon": "^1.17.5",
+    "sinon-as-promised": "^4.0.2",
+    "sinon-chai": "^2.8.0"
   }
 }
