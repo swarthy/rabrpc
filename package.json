@@ -8,14 +8,14 @@
     "coverage": "istanbul cover _mocha"
   },
   "keywords": [
-    "rpc"
+    "rabbitmq", "microservice", "pubsub", "reqres", "rpc"
   ],
   "repository": {
     "type": "git",
     "url": "git@github.com:swarthy/rabrpc.git"
   },
   "author": "Alexander Mochalin <horroshow@mail.ru>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "jsend": "^1.0.2",
     "lodash": "^4.15.0",
