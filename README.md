@@ -12,9 +12,9 @@ Another RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabb
  * Convention over configuration in exchange, queue, routingKeys naming
 
 The only listed below producer/consumer patterns are implemented now:
-* [X] Request / Response
-* [] Publish / Subscribe
-* [] Send / Receive
+* [x] Request / Response
+* [ ] Publish / Subscribe
+* [ ] Send / Receive
 
 ## Installation
 ```bash
