@@ -11,11 +11,13 @@ const config = {
 }
 describe('integration', () => {
   before(() => {
-    rpc.respond('v1.test-service.mul', (payload, actions) => {
+    rpc.respond('v1.test-service.mul', (payload, actions, messageType) => {
+      expect(messageType).to.be.eql('v1.test-service.mul')
       expect(payload).to.be.eql(42)
       return actions.success(payload * 2)
     })
-    rpc.respond('v1.test-service.div', (payload, actions) => {
+    rpc.respond('v1.test-service.div', (payload, actions, messageType) => {
+      expect(messageType).to.be.eql('v1.test-service.div')
       expect(payload).to.be.eql(100)
       return actions.success(payload / 2)
     })
