@@ -4,7 +4,9 @@
   "description": "RabbitMQ RPC Library based on Rabbot",
   "main": "index.js",
   "scripts": {
-    "test": "eslint . && mocha",
+    "test": "eslint . && npm run test-unit && npm run test-integration",
+    "test-unit": "mocha test/bootstrap.test.js test/unit/**/*.test.js",
+    "test-integration": "mocha test/bootstrap.test.js test/integration/**/*.test.js",
     "coverage": "istanbul cover _mocha"
   },
   "keywords": [

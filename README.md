@@ -29,6 +29,44 @@ npm install --save rabrpc
 
 > Important! `rpc.initialize` *should* be called **after** binding handlers via `rpc.respond` in consumer microservice and *must* be called **before** requesting data with `rpc.request` in provider microservice
 
+##### rpc.initialize(config, [transformConfig = true])
+ * **config** - rabrpc or rabbot config object
+ * **transformConfig** - if **config** is a rabbot setting **transformConfig** must be false, default true
+
+###### rabbot json configuration
+
+If you need more flexibility, you can pass a valid rabbot configuration into `rpc.initialize`
+The only requirement is name exchanges, queues and bindings with [convention](#convention)
+```javascript
+const config = {
+  connection: {
+    user: "guest",
+    pass: "guest",
+    server: "127.0.0.1",
+    // server: "127.0.0.1, 194.66.82.11",
+    // server: ["127.0.0.1", "194.66.82.11"],
+    port: 5672,
+    timeout: 2000,
+    vhost: "%2fmyhost"
+  },
+  exchanges:[
+    { name: "config-ex.1", type: "fanout", publishTimeout: 1000 },
+    { name: "config-ex.2", type: "topic", alternate: "alternate-ex.2", persistent: true },
+    { name: "dead-letter-ex.2", type: "fanout" }
+  ],
+  queues:[
+    { name:"config-q.1", limit: 100, queueLimit: 1000 },
+    { name:"config-q.2", subscribe: true, deadLetter: "dead-letter-ex.2" }
+  ],
+  bindings:[
+    { exchange: "config-ex.1", target: "config-q.1", keys: [ "bob","fred" ] },
+    { exchange: "config-ex.2", target: "config-q.2", keys: "test1" }
+  ],
+}
+
+rpc.initialize(config, false) // transform config = false
+```
+
 
 ##### Responder initialization
 
@@ -81,7 +119,7 @@ rpc.initialize(config) // returns promise
 
 ```
 
-### Convention
+#### Convention
 
 | Parmeter        | Value                            | Example                        |
 | --------------- | -------------------------------- | ------------------------------ |
@@ -92,10 +130,10 @@ rpc.initialize(config) // returns promise
 
 ##### Response
 ###### rpc.respond(messageType, handler)
- * **messageType** full path for service action, e.g. `'v1.images.resize'` or `'v1.users.role.findAll'` where **second** part (`images`, `users`) is a serviceName specified in config (in rabbot using as type of message)
- * **handler** function, which takes `payload` and `responseActions`
-   * **payload** parameter from rpc.request
-   * **responseActions** object with 3 functions `success`, `fail`, `error` (see [JSEND](https://github.com/Prestaul/jsend))
+ * **messageType** - full path for service action, e.g. `'v1.images.resize'` or `'v1.users.role.findAll'` where **second** part (`images`, `users`) is a serviceName specified in config (in rabbot using as type of message)
+ * **handler** - function, which takes `payload` and `responseActions`
+   * **payload** - parameter from rpc.request
+   * **responseActions** - object with 3 functions `success`, `fail`, `error` (see [JSEND](https://github.com/Prestaul/jsend))
 
 ###### Example
 
@@ -112,9 +150,9 @@ rpc.initialize(config)
 
 ##### Request
 ###### rpc.request(messageType, payload, [options])
- * **messageType** see `rpc.respond` *messageType* argument
- * **payload** payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
- * **options** rabbot request options (will be merged with defaults: `{replyTimeout: 10000}`)
+ * **messageType** - see `rpc.respond` *messageType* argument
+ * **payload** - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
+ * **options** - rabbot request options (will be merged with defaults: `{replyTimeout: 10000}`)
 
 returns `Promise`, which resolved with 2 element array: `[body, actions]`
  * **body** JSEND formated repose (see [JSEND](https://github.com/Prestaul/jsend))
@@ -130,10 +168,8 @@ const rpc = require('rabrpc')
 // request allowed only after initialization
 rpc.initialize(config)
 .then(() => rpc.request('v1.foo-service-name.someAction', 42))
-.then(([body, actions]) => {
+.then(body => {
   console.log('response:', body.data) // body = {status: 'succes', data: 84}
-  return actions.ack() // let responder know that reponse received (what?)
 })
 
 ```
-

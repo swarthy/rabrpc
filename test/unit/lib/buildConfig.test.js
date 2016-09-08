@@ -27,15 +27,15 @@ describe('buildConfig', () => {
         connection: {
           uri: 'localhost'
         },
-        exchanges: [{name: 'req-res.test', type: 'direct'}],
+        exchanges: [{name: 'req-res.test', type: 'direct', replyTimeout: 10000}],
         queues: [],
         bindings: []
       })
     })
     it('should process array', () => {
       expect(buildConfig(cfg({req: ['test1', 'test2']})).exchanges).to.be.eql([
-        {name: 'req-res.test1', type: 'direct'},
-        {name: 'req-res.test2', type: 'direct'}
+        {name: 'req-res.test1', type: 'direct', replyTimeout: 10000},
+        {name: 'req-res.test2', type: 'direct', replyTimeout: 10000}
       ])
     })
   })
@@ -45,7 +45,7 @@ describe('buildConfig', () => {
         connection: {
           uri: 'localhost'
         },
-        exchanges: [{name: 'req-res.test', type: 'direct'}],
+        exchanges: [{name: 'req-res.test', type: 'direct', replyTimeout: 10000}],
         queues: [{name: 'req-res.test', subscribe: true}],
         bindings: [{
           exchange: 'req-res.test',
@@ -77,8 +77,8 @@ describe('buildConfig', () => {
         }],
         connection: { uri: 'localhost' },
         exchanges: [
-          {name: 'req-res.test1', type: 'direct'},
-          {name: 'req-res.test2', type: 'direct'}
+          {name: 'req-res.test1', type: 'direct', replyTimeout: 10000},
+          {name: 'req-res.test2', type: 'direct', replyTimeout: 10000}
         ],
         queues: [
           {name: 'req-res.test1', subscribe: true},
