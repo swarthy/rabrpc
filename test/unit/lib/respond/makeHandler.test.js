@@ -13,13 +13,13 @@ describe('makeHandler', () => {
   let handler
   beforeEach(() => {
     userHandler = sinon.spy()
-    handler = makeHandler(userHandler)
+    handler = makeHandler(userHandler, 'messageType')
   })
   it('should return user-friendly handler', () => {
     expect(handler).to.be.fn
   })
   it('should return handler which call userHandler with payload and actions', () => {
     handler(message)
-    expect(userHandler).to.have.been.calledWithMatch(42, {}) // actions object
+    expect(userHandler).to.have.been.calledWithMatch(42, {}, 'messageType') // actions object
   })
 })
