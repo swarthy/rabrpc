@@ -1,0 +1,15 @@
+const parseExchange = require('../../../../../lib/transformConfig/req-res/parseExchange')
+
+describe('transformConfig req-res parseExchange', () => {
+  it('should return exchange config without merging options', () => {
+    const config = parseExchange({serviceName: 'test', autoDelete: true})
+    expect(config.name).to.be.eql('req-res.test')
+    expect(config.type).to.be.eql('direct')
+  })
+  it('should return merged exchange config if second argument is true', () => {
+    const config = parseExchange({serviceName: 'test', autoDelete: true}, true)
+    expect(config.name).to.be.eql('req-res.test')
+    expect(config.type).to.be.eql('direct')
+    expect(config.autoDelete).to.be.eql(true)
+  })
+})
