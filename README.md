@@ -1,6 +1,7 @@
 # RabRPC
 [![Build Status](https://travis-ci.org/swarthy/rabrpc.svg?branch=master)](https://travis-ci.org/swarthy/rabrpc)
 [![Dependencies Status](https://david-dm.org/swarthy/rabrpc.svg)]()
+[![Known Vulnerabilities](https://snyk.io/test/npm/rabrpc/badge.svg)](https://snyk.io/test/npm/rabrpc)
 
 Another RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabbot](https://github.com/arobson/rabbot))
 
