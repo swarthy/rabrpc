@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "preversion": "npm test",
-    "test": "eslint . && npm run test-unit && npm run test-integration",
+    "test": "snyk test && eslint . && npm run test-unit && npm run test-integration",
     "test-unit": "mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
     "test-integration": "mocha \"test/bootstrap.test.js\" \"test/integration/**/*.test.js\"",
     "coverage": "istanbul cover _mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\""
@@ -38,6 +38,7 @@
     "mocha": "^3.0.2",
     "sinon": "^1.17.5",
     "sinon-as-promised": "^4.0.2",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "snyk": "^1.19.1"
   }
 }
