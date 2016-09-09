@@ -132,9 +132,10 @@ rpc.initialize(config) // returns promise
 ##### Response
 ###### rpc.respond(messageType, handler)
  * **messageType** - full path for service action, e.g. `'v1.images.resize'` or `'v1.users.role.findAll'` where **second** part (`images`, `users`) is a serviceName specified in config (in rabbot using as type of message)
- * **handler** - function, which takes `payload` and `responseActions`
+ * **handler** - function, which takes `payload`, `responseActions` and `messageType`
    * **payload** - parameter from rpc.request
    * **responseActions** - object with 3 functions `success`, `fail`, `error` (see [JSEND](https://github.com/Prestaul/jsend))
+   * **messageType** - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
 
 ###### Example
 
@@ -142,7 +143,27 @@ rpc.initialize(config) // returns promise
 const rpc = require('rabrpc')
 
 // before initialization
-rpc.respond('v1.foo-service-name.someAction', (payload, actions) => actions.success(payload * 2))
+rpc.respond('v1.foo-service-name.someAction', (payload, actions, messageType) => actions.success(payload * 2))
+
+// handler can aslo just return promise, or `.then`able or value and result will be replied with success status
+// exception or rejected promise will cause replying error (be sure throw `Error` with message (JSEND requirement))
+
+rpc.respond('v1.foo-service-name.anotherAction', payload => SomeDB.query({/* ... */}).then(rows => ({count: rows.count, data: rows})))
+rpc.respond('v1.foo-service-name.anotherAction', payload => payload * 2)
+
+rpc.respond('v1.foo-service-name.someResource.*', (payload, actions, messageType) => {
+  const [version, serviceName, resource, actionName] = messageType.split('.')
+  switch (actionName) {
+    case 'find':
+      return Resource.findAll(paylaod)
+    case 'create':
+      return Resource.create(payload)
+    case 'destroy':
+      return Resource.destroy(payload)
+    default:
+      throw new Error(`Action '${actionName}' is not supported!`)
+  }
+})
 
 // in your service initialization cycle
 rpc.initialize(config)
