@@ -23,6 +23,17 @@ describe('makeResponseActions', () => {
     const actions = makeResponseActions(message)
     actions.error('some message')
     expect(message.reply).to.have.been.calledWithMatch({status: 'error', message: 'some message'})
+
+    expect(() => actions.error(new Error())).to.have.throw(/"message" must be defined when calling jsend.error/)
+
+    actions.error(new Error('SOME ERROR'))
+    expect(message.reply).to.have.been.calledWithMatch({status: 'error', message: 'SOME ERROR'})
+
+    const errorWithCode = new Error('ERROR WITH CODE')
+    errorWithCode.code = 42
+    actions.error(errorWithCode)
+    expect(message.reply).to.have.been.calledWithMatch({status: 'error', code: 42, message: 'ERROR WITH CODE'})
+
     actions.error({code: 42, message: 'some message'})
     expect(message.reply).to.have.been.calledWithMatch({status: 'error', code: 42, message: 'some message'})
   })
