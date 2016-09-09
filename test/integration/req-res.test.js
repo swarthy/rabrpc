@@ -4,7 +4,7 @@ const Promise = require('bluebird')
 const config = {
   connection: {},
   req: {serviceName: 'test-service', replyTimeout: 30000, autoDelete: true}, // exchange config
-  res: {serviceName: 'test-service', autoDelete: true, noBatch: true} // queue config
+  res: {serviceName: 'test-service', noBatch: true, autoDelete: true} // queue config
 }
 
 function mul (a, b) {
@@ -20,10 +20,6 @@ function div (a, b) {
 
 describe('integration', () => {
   before(() => {
-    rpc.respond('v1.test-service.make.me.some.#', (payload, actions, messageType) => {
-      const [, , , , , drink] = messageType.split('.')
-      return `${payload} cup of ${drink}`
-    })
     rpc.respond('v1.test-service.mul', (payload, actions, messageType) => {
       expect(messageType).to.be.eql('v1.test-service.mul')
       expect(payload).to.have.all.keys('a', 'b')
@@ -34,11 +30,14 @@ describe('integration', () => {
       expect(payload).to.have.all.keys('a', 'b')
       return div(payload.a, payload.b)
     })
+    rpc.respond('v1.test-service.make.me.some.#', (payload, actions, messageType) => {
+      const [, , , , , drink] = messageType.split('.')
+      return `${payload} cup of ${drink}`
+    })
     return rpc.initialize(config)
   })
-  after(() => {
-    return Promise.delay(100).then(() => rpc.shutdown())
-  })
+  after(() => Promise.delay(100).then(() => rpc.shutdown()))
+
   it('should respond with multipy result', () => {
     return rpc.request('v1.test-service.mul', {a: 10, b: 5})
     .then(body => {
