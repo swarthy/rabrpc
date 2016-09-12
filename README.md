@@ -1,4 +1,5 @@
 # RabRPC
+[![npm version](https://badge.fury.io/js/rabrpc.svg)](https://badge.fury.io/js/rabrpc)
 [![Build Status](https://travis-ci.org/swarthy/rabrpc.svg?branch=master)](https://travis-ci.org/swarthy/rabrpc)
 [![Dependencies Status](https://david-dm.org/swarthy/rabrpc.svg)]()
 [![Known Vulnerabilities](https://snyk.io/test/npm/rabrpc/badge.svg)](https://snyk.io/test/npm/rabrpc)
