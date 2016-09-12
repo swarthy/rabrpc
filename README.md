@@ -6,7 +6,7 @@
 
 Another RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabbot](https://github.com/arobson/rabbot))
 
-> WARNING: This project is currently in its BETA stage!
+> WARNING: This project is currently in its ALPHA stage!
 
 ## Features
 
