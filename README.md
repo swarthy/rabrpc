@@ -32,8 +32,8 @@ npm install --save rabrpc
 > Important! `rpc.initialize` *should* be called **after** binding handlers via `rpc.respond` in consumer microservice and *must* be called **before** requesting data with `rpc.request` in provider microservice
 
 ##### rpc.initialize(config, [transformConfig = true])
- * **config** - rabrpc or rabbot config object
- * **transformConfig** - if **config** is a rabbot setting **transformConfig** must be false, default true
+ * `config` - rabrpc or rabbot config object
+ * `transformConfig` - if `config` is a rabbot setting `transformConfig` must be false, default true
 
 ###### rabbot json configuration
 
@@ -132,11 +132,11 @@ rpc.initialize(config) // returns promise
 
 ##### Response
 ###### rpc.respond(messageType, handler)
- * **messageType** - full path for service action, e.g. `'v1.images.resize'` or `'v1.users.role.findAll'` where **second** part (`images`, `users`) is a serviceName specified in config (in rabbot using as type of message)
- * **handler** - function, which takes `payload`, `responseActions` and `messageType`
-   * **payload** - parameter from rpc.request
-   * **responseActions** - object with 3 functions `success`, `fail`, `error` (see [JSEND](https://github.com/Prestaul/jsend))
-   * **messageType** - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
+ * `messageType` - full path for service action, e.g. `'v1.images.resize'` or `'v1.users.role.findAll'` where **second** part (`images`, `users`) is a serviceName specified in config (in rabbot using as type of message)
+ * `handler` - function, which takes `payload`, `responseActions` and `messageType`
+   * `payload` - parameter from rpc.request
+   * `responseActions` - object with 3 functions `success`, `fail`, `error` (see [JSEND](https://github.com/Prestaul/jsend))
+   * `messageType` - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
 
 ###### Example
 
@@ -173,15 +173,13 @@ rpc.initialize(config)
 
 ##### Request
 ###### rpc.request(messageType, payload, [options])
- * **messageType** - see `rpc.respond` *messageType* argument
- * **payload** - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
- * **options** - rabbot request options (will be merged with defaults: `{replyTimeout: 10000}`)
+ * `messageType` - see `rpc.respond` *messageType* argument
+ * `payload` - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
+ * `options` - rabbot request options (will be merged with defaults: `{replyTimeout: 10000}`)
 
 returns `Promise`, which resolved with 2 element array: `[body, actions]`
- * **body** JSEND formated repose (see [JSEND](https://github.com/Prestaul/jsend))
- * **actions** 3 rabbot message actions: ack, nack, reject (see https://github.com/arobson/rabbot#message-api)
-
-> Why only 3? Who knows?!
+ * `body` JSEND formated repose (see [JSEND](https://github.com/Prestaul/jsend))
+ * `actions` rabbot message actions: ack, nack, reject (see https://github.com/arobson/rabbot#message-api)
 
 ###### Example
 
