@@ -7,7 +7,6 @@ const respond = require('./lib/respond')
 module.exports = {
   initialize (config, transform = true) {
     return rabbot.configure(transform ? transformConfig(config) : config)
-    .then(() => process.once('SIGINT', this.shutdown))
     .catch(err => {
       console.error('[RPC] Initialing error:', err)
       throw err
