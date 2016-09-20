@@ -25,9 +25,7 @@ npm install --save rabrpc
 
 ## Examples
 
-### Request / Response
-
-#### Initialization
+### Initialization
 
 > Important! `rpc.initialize` *should* be called **after** binding handlers via `rpc.respond` in consumer microservice and *must* be called **before** requesting data with `rpc.request` in provider microservice
 
@@ -69,8 +67,9 @@ const config = {
 rpc.initialize(config, false) // transform config = false
 ```
 
+### Request / Response
 
-##### Responder initialization
+#### Responder initialization
 
 ```javascript
 const rpc = require('rabrpc') // singleton
@@ -100,7 +99,7 @@ rpc.initialize(config) // returns promise
 
 ```
 
-##### Requester initialization
+#### Requester initialization
 
 ```javascript
 const rpc = require('rabrpc') // singleton
@@ -125,13 +124,13 @@ rpc.initialize(config) // returns promise
 
 | Parmeter        | Value                            | Example                        |
 | --------------- | -------------------------------- | ------------------------------ |
-| **exchange**    | req.res-`serviceName`            | req.res-foo-service-name       |
-| **queue**       | req.res-`serviceName`            | req.res-foo-service-name       |
+| **exchange**    | req-res.`serviceName`            | req-res.foo-service-name       |
+| **queue**       | req-res.`serviceName`            | req-res.foo-service-name       |
 | **routingKey**  | `serviceName`                    | foo-service-name               |
 | **messageType** | `version`.`serviceName`.`action` | v1.foo-service-name.someAction |
 
-##### Response
-###### rpc.respond(messageType, handler)
+#### Response
+##### rpc.respond(messageType, handler)
  * `messageType` - full path for service action, e.g. `'v1.images.resize'` or `'v1.users.role.findAll'` where **second** part (`images`, `users`) is a serviceName specified in config (in rabbot using as type of message)
  * `handler` - function, which takes `payload`, `responseActions` and `messageType`
    * `payload` - parameter from rpc.request
@@ -150,7 +149,7 @@ rpc.respond('v1.foo-service-name.someAction', (payload, actions, messageType) =>
 // exception or rejected promise will cause replying error (be sure throw `Error` with message (JSEND requirement))
 
 rpc.respond('v1.foo-service-name.anotherAction', payload => SomeDB.query({/* ... */}).then(rows => ({count: rows.count, data: rows})))
-rpc.respond('v1.foo-service-name.anotherAction', payload => payload * 2)
+rpc.respond('v1.foo-service-name.thirdAction', payload => payload * 2)
 
 rpc.respond('v1.foo-service-name.someResource.*', (payload, actions, messageType) => {
   const [version, serviceName, resource, actionName] = messageType.split('.')
@@ -171,8 +170,8 @@ rpc.initialize(config)
 
 ```
 
-##### Request
-###### rpc.request(messageType, payload, [options])
+#### Request
+##### rpc.request(messageType, payload, [options])
  * `messageType` - see `rpc.respond` *messageType* argument
  * `payload` - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
  * `options` - rabbot request options (will be merged with defaults: `{replyTimeout: 10000}`)
@@ -194,6 +193,54 @@ rpc.initialize(config)
 
 ```
 
+
+### Send / Receive
+
+#### Receiver initialization
+
+```javascript
+const rpc = require('rabrpc') // singleton
+
+const config = {
+  connection: 'amqp://guest:guest@localhost:5672/?heartbeat=10',
+  recv: { // string or object or array of strings or objects
+    serviceName: 'foo-service-name',
+    messageTtl: 30000,
+    limit: 10,
+    // ...etc
+  }
+}
+
+// somewhere in your microservice initialization cycle
+rpc.initialize(config) // returns promise
+
+```
+
+#### Sender initialization
+
+```javascript
+const rpc = require('rabrpc') // singleton
+
+const config = {
+  connection: '<URI string>', // see above
+  // send: 'foo-service-name' | ['foo-service-name', 'bar-service-name'] | {serviceName: 'foo-service-name'} | [{serviceName: 'foo-service-name'}, {serviceName: 'bar-service-name'}]
+  send: 'foo-service-name'
+}
+
+// somewhere in your microservice initialization cycle
+rpc.initialize(config) // returns promise
+
+```
+
+#### Convention
+
+| Parmeter        | Value                            | Example                        |
+| --------------- | -------------------------------- | ------------------------------ |
+| **exchange**    | send-recv.`serviceName`          | send-recv.foo-service-name     |
+| **queue**       | send-recv.`serviceName`          | send-recv.foo-service-name     |
+| **routingKey**  | `serviceName`                    | foo-service-name               |
+| **messageType** | `version`.`serviceName`.`action` | v1.foo-service-name.someAction |
+
 ##### Receive
 ###### rpc.receive(messageType, handler)
  * `messageType` - full path for service action, e.g. `'v1.images.archive'` or `'v1.statistics.synchronize'` where **second** part (`images`, `statistics`) is a serviceName specified in config (in rabbot using as type of message)
@@ -213,10 +260,11 @@ rpc.receive('v1.foo-service-name.someAction', (payload, actions, messageType) =>
 // handler can aslo just return promise, or `.then`able or value and message will be ack'ed on promise resolution
 // exception or rejected promise will cause nack'ing message
 
-rpc.receive('v1.foo-service-name.anotherAction', payload => SomeDB.query({/* ... */}).then(rows => ({count: rows.count, data: rows}))) // auto ack
-rpc.receive('v1.foo-service-name.anotherAction', payload => payload * 2) // auto ack
+rpc.receive('v1.foo-service-name.anotherAction', payload => SomeDB.query({/* ... */})) // auto ack
 
 rpc.receive('v1.foo-service-name.someResource.*', (payload, actions, messageType) => {
+  // you can manually ack message if you don't need default behaviuor
+  actions.ack() // DOES NOT RETURN PROMISE
   const [version, serviceName, resource, actionName] = messageType.split('.')
   switch (actionName) {
     case 'find':
@@ -226,7 +274,7 @@ rpc.receive('v1.foo-service-name.someResource.*', (payload, actions, messageType
     case 'destroy':
       return Resource.destroy(payload)
     default:
-      throw new Error(`Action '${actionName}' is not supported!`)
+      throw new Error(`Action '${actionName}' is not supported!`) // will not produce nack call
   }
 })
 
