@@ -20,6 +20,8 @@ describe('transformConfig', () => {
       exchanges: [], queues: [], bindings: []
     })
   })
+
+  // Request - Response
   it('should transofrm req config', () => {
     expect(transformConfig({connection: 'zzz', req: 'test'}))
     .to.be.eql({
@@ -40,8 +42,32 @@ describe('transformConfig', () => {
       }]
     })
   })
+
+  // Send - Receive
+  it('should transofrm req config', () => {
+    expect(transformConfig({connection: 'zzz', send: 'test'}))
+    .to.be.eql({
+      connection: {uri: 'zzz'},
+      exchanges: [{name: 'send-recv.test', replyTimeout: 10000, type: 'direct'}],
+      queues: [], bindings: []
+    })
+  })
+  it('should transofrm recv config', () => {
+    expect(transformConfig({connection: 'zzz', recv: 'test'}))
+    .to.be.eql({
+      connection: {uri: 'zzz'},
+      exchanges: [{name: 'send-recv.test', replyTimeout: 10000, type: 'direct'}],
+      queues: [{name: 'send-recv.test', subscribe: true}], bindings: [{
+        exchange: 'send-recv.test',
+        target: 'send-recv.test',
+        keys: 'test'
+      }]
+    })
+  })
   it('should process array and non array equals', () => {
     expect(transformConfig({connection: 'zzz', req: 'test'})).to.be.eql(transformConfig({connection: 'zzz', req: ['test']}))
     expect(transformConfig({connection: 'zzz', res: 'test'})).to.be.eql(transformConfig({connection: 'zzz', res: ['test']}))
+    expect(transformConfig({connection: 'zzz', send: 'test'})).to.be.eql(transformConfig({connection: 'zzz', send: ['test']}))
+    expect(transformConfig({connection: 'zzz', recv: 'test'})).to.be.eql(transformConfig({connection: 'zzz', recv: ['test']}))
   })
 })
