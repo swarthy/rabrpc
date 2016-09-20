@@ -8,11 +8,26 @@ describe('RPC', () => {
     sinon.stub(rabbot, 'configure').resolves()
     sinon.stub(rabbot, 'shutdown').resolves()
   })
+  beforeEach(() => {
+    rabbot.configure.reset()
+    rabbot.shutdown.reset()
+  })
   after(() => {
     rabbot.configure.restore()
     rabbot.shutdown.restore()
   })
   describe('initialize', () => {
+    beforeEach(() => {
+      rpc.initialized = false
+    })
+    it('should set initialized flag on initialize', () => {
+      return rpc.initialize({connection: 'localhost'})
+      .then(() => expect(rpc.initialized).to.be.true)
+    })
+    it('should throw exception on reinitializing', () => {
+      expect(rpc.initialize({connection: 'localhost'}).then(() => rpc.initialize({connection: 'localhost'})))
+      .to.be.rejectedWith(/Already/)
+    })
     it('should call rabbot configure', () => {
       rpc.initialize({connection: 'localhost'})
       expect(rabbot.configure).to.have.been.calledOnce
