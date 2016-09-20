@@ -16,7 +16,7 @@ Another RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabb
 The only listed below producer/consumer patterns are implemented now:
 * [x] Request / Response
 * [ ] Publish / Subscribe
-* [ ] Send / Receive
+* [x] Send / Receive
 
 ## Installation
 ```bash
@@ -177,9 +177,8 @@ rpc.initialize(config)
  * `payload` - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
  * `options` - rabbot request options (will be merged with defaults: `{replyTimeout: 10000}`)
 
-returns `Promise`, which resolved with 2 element array: `[body, actions]`
- * `body` JSEND formated repose (see [JSEND](https://github.com/Prestaul/jsend))
- * `actions` rabbot message actions: ack, nack, reject (see https://github.com/arobson/rabbot#message-api)
+returns `Promise`, which resolved with `body` - JSEND formated response 
+ * `body` JSEND formated response (see [JSEND](https://github.com/Prestaul/jsend))
 
 ###### Example
 
@@ -191,6 +190,69 @@ rpc.initialize(config)
 .then(() => rpc.request('v1.foo-service-name.someAction', 42))
 .then(body => {
   console.log('response:', body.data) // body = {status: 'succes', data: 84}
+})
+
+```
+
+##### Receive
+###### rpc.receive(messageType, handler)
+ * `messageType` - full path for service action, e.g. `'v1.images.archive'` or `'v1.statistics.synchronize'` where **second** part (`images`, `statistics`) is a serviceName specified in config (in rabbot using as type of message)
+ * `handler` - function, which takes `payload`, `actions` and `messageType`
+   * `payload` - parameter from rpc.request
+   * `actions` - object with 3 functions `ack`, `nack`, `reject` (see [Rabbot Message API](https://github.com/arobson/rabbot#message-api))
+   * `messageType` - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
+
+###### Example
+
+```javascript
+const rpc = require('rabrpc')
+
+// before initialization
+rpc.receive('v1.foo-service-name.someAction', (payload, actions, messageType) => actions.ack())
+
+// handler can aslo just return promise, or `.then`able or value and message will be ack'ed on promise resolution
+// exception or rejected promise will cause nack'ing message
+
+rpc.receive('v1.foo-service-name.anotherAction', payload => SomeDB.query({/* ... */}).then(rows => ({count: rows.count, data: rows}))) // auto ack
+rpc.receive('v1.foo-service-name.anotherAction', payload => payload * 2) // auto ack
+
+rpc.receive('v1.foo-service-name.someResource.*', (payload, actions, messageType) => {
+  const [version, serviceName, resource, actionName] = messageType.split('.')
+  switch (actionName) {
+    case 'find':
+      return Resource.findAll(paylaod)
+    case 'create':
+      return Resource.create(payload)
+    case 'destroy':
+      return Resource.destroy(payload)
+    default:
+      throw new Error(`Action '${actionName}' is not supported!`)
+  }
+})
+
+// in your service initialization cycle
+rpc.initialize(config)
+
+```
+
+##### Send
+###### rpc.send(messageType, payload, [options])
+ * `messageType` - see `rpc.respond` *messageType* argument
+ * `payload` - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
+ * `options` - rabbot publish options (will be merged with defaults: `{replyTimeout: 10000}`)
+
+returns rabbot publish `Promise` (see [Rabbot Publish](https://github.com/arobson/rabbot#publish))
+
+###### Example
+
+```javascript
+const rpc = require('rabrpc')
+
+// send allowed only after initialization
+rpc.initialize(config)
+.then(() => rpc.send('v1.foo-service-name.someAction', 42))
+.then(() => {
+  console.log('Message sended')
 })
 
 ```
