@@ -1,8 +1,10 @@
 # RabRPC
-[![npm version](https://badge.fury.io/js/rabrpc.svg)](https://badge.fury.io/js/rabrpc)
-[![Build Status](https://travis-ci.org/swarthy/rabrpc.svg?branch=master)](https://travis-ci.org/swarthy/rabrpc)
-[![Dependencies Status](https://david-dm.org/swarthy/rabrpc.svg)]()
-[![Known Vulnerabilities](https://snyk.io/test/npm/rabrpc/badge.svg)](https://snyk.io/test/npm/rabrpc)
+
+[![NPM version][npm-image]][npm-url]
+[![Build status][ci-image]][ci-url]
+[![Dependency Status][daviddm-image]][daviddm-url]
+[![Code Climate][codeclimate-image]][codeclimate-url]
+[![Known Vulnerabilities][snyk-image]][snyk-url]
 
 Another RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabbot](https://github.com/arobson/rabbot))
 
@@ -304,3 +306,14 @@ rpc.configure(config)
 })
 
 ```
+
+[npm-image]: https://img.shields.io/npm/v/rabrpc.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/rabrpc
+[ci-image]: https://img.shields.io/travis/swarthy/rabrpc/master.svg?style=flat-square
+[ci-url]: https://travis-ci.org/swarthy/rabrpc
+[daviddm-image]: http://img.shields.io/david/swarthy/rabrpc.svg?style=flat-square
+[daviddm-url]: https://david-dm.org/swarthy/rabrpc
+[codeclimate-image]: https://img.shields.io/codeclimate/github/swarthy/rabrpc.svg?style=flat-square
+[codeclimate-url]: https://codeclimate.com/github/swarthy/rabrpc
+[snyk-image]: https://snyk.io/test/npm/rabrpc/badge.svg
+[snyk-url]: https://snyk.io/test/npm/rabrpc
