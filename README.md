@@ -27,15 +27,15 @@ npm install --save rabrpc
 
 ### Initialization
 
-> Important! `rpc.initialize` *should* be called **after** binding handlers via `rpc.respond` in consumer microservice and *must* be called **before** requesting data with `rpc.request` in provider microservice
+> Important! `rpc.configure` *should* be called **after** binding handlers via `rpc.respond` in consumer microservice and *must* be called **before** requesting data with `rpc.request` in provider microservice
 
-##### rpc.initialize(config, [transformConfig = true])
+##### rpc.configure(config, [transformConfig = true])
  * `config` - rabrpc or rabbot config object
  * `transformConfig` - if `config` is a rabbot setting `transformConfig` must be false, default true
 
 ###### rabbot json configuration
 
-If you need more flexibility, you can pass a valid rabbot configuration into `rpc.initialize`
+If you need more flexibility, you can pass a valid rabbot configuration into `rpc.configure`
 The only requirement is name exchanges, queues and bindings with [convention](#convention)
 ```javascript
 const config = {
@@ -64,7 +64,7 @@ const config = {
   ],
 }
 
-rpc.initialize(config, false) // transform config = false
+rpc.configure(config, false) // transform config = false
 ```
 
 ### Request / Response
@@ -95,7 +95,7 @@ const config = {
 }
 
 // somewhere in your microservice initialization cycle
-rpc.initialize(config) // returns promise
+rpc.configure(config) // returns promise
 
 ```
 
@@ -116,7 +116,7 @@ const config = {
 }
 
 // somewhere in your microservice initialization cycle
-rpc.initialize(config) // returns promise
+rpc.configure(config) // returns promise
 
 ```
 
@@ -166,7 +166,7 @@ rpc.respond('v1.foo-service-name.someResource.*', (payload, actions, messageType
 })
 
 // in your service initialization cycle
-rpc.initialize(config)
+rpc.configure(config)
 
 ```
 
@@ -185,7 +185,7 @@ returns `Promise`, which resolved with `body` - JSEND formated response
 const rpc = require('rabrpc')
 
 // request allowed only after initialization
-rpc.initialize(config)
+rpc.configure(config)
 .then(() => rpc.request('v1.foo-service-name.someAction', 42))
 .then(body => {
   console.log('response:', body.data) // body = {status: 'succes', data: 84}
@@ -212,7 +212,7 @@ const config = {
 }
 
 // somewhere in your microservice initialization cycle
-rpc.initialize(config) // returns promise
+rpc.configure(config) // returns promise
 
 ```
 
@@ -228,7 +228,7 @@ const config = {
 }
 
 // somewhere in your microservice initialization cycle
-rpc.initialize(config) // returns promise
+rpc.configure(config) // returns promise
 
 ```
 
@@ -279,7 +279,7 @@ rpc.receive('v1.foo-service-name.someResource.*', (payload, actions, messageType
 })
 
 // in your service initialization cycle
-rpc.initialize(config)
+rpc.configure(config)
 
 ```
 
@@ -297,7 +297,7 @@ returns rabbot publish `Promise` (see [Rabbot Publish](https://github.com/arobso
 const rpc = require('rabrpc')
 
 // send allowed only after initialization
-rpc.initialize(config)
+rpc.configure(config)
 .then(() => rpc.send('v1.foo-service-name.someAction', 42))
 .then(() => {
   console.log('Message sended')

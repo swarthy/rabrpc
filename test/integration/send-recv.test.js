@@ -22,7 +22,7 @@ describe('integration send-recv', () => {
     rpc.receive('v1.send-recv-test-service.someAction', someAction)
     rpc.receive('v1.send-recv-test-service.errorAction', errorAction)
 
-    return rpc.initialize(config)
+    return rpc.configure(config)
   })
   after(() => Promise.delay(100).then(() => rpc.shutdown()))
 

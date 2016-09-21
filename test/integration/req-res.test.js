@@ -34,7 +34,7 @@ describe('integration req-res', () => {
       const [, , , , , drink] = messageType.split('.')
       return `${payload} cup of ${drink}`
     })
-    return rpc.initialize(config)
+    return rpc.configure(config)
   })
   after(() => Promise.delay(100).then(() => rpc.shutdown()))
 

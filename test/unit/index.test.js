@@ -16,24 +16,13 @@ describe('RPC', () => {
     rabbot.configure.restore()
     rabbot.shutdown.restore()
   })
-  describe('initialize', () => {
-    beforeEach(() => {
-      rpc.initialized = false
-    })
-    it('should set initialized flag on initialize', () => {
-      return rpc.initialize({connection: 'localhost'})
-      .then(() => expect(rpc.initialized).to.be.true)
-    })
-    it('should throw exception on reinitializing', () => {
-      expect(rpc.initialize({connection: 'localhost'}).then(() => rpc.initialize({connection: 'localhost'})))
-      .to.be.rejectedWith(/Already/)
-    })
+  describe('configure', () => {
     it('should call rabbot configure', () => {
-      rpc.initialize({connection: 'localhost'})
+      rpc.configure({connection: 'localhost'})
       expect(rabbot.configure).to.have.been.calledOnce
     })
     it('should make config for rabbot', () => {
-      rpc.initialize({connection: 'localhost'})
+      rpc.configure({connection: 'localhost'})
       expect(rabbot.configure).to.have.been.calledWithMatch({
         bindings: [],
         connection: {uri: 'localhost'},
@@ -42,12 +31,12 @@ describe('RPC', () => {
       })
     })
     it('should pass rabbot config', () => {
-      rpc.initialize({a: 10}, false)
+      rpc.configure({a: 10}, false)
       expect(rabbot.configure).to.have.been.calledWithMatch({a: 10})
     })
     it('should reject promise on error', () => {
       rabbot.configure.rejects(new Error('MOCK ERROR'))
-      expect(rpc.initialize({a: 10}, false)).to.rejectedWith(/MOCK ERROR/)
+      expect(rpc.configure({a: 10}, false)).to.rejectedWith(/MOCK ERROR/)
     })
   })
   describe('shutdown', () => {

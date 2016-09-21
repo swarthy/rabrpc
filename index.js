@@ -8,19 +8,14 @@ const send = require('./lib/send')
 const receive = require('./lib/receive')
 
 const RabRPC = {
-  initialize (config, transform = true) {
-    if (RabRPC.initialized) {
-      throw new Error('[RabRPC] Already initialized')
-    }
-    RabRPC.initialized = true
+  configure (config, transform = true) {
     return rabbot.configure(transform ? transformConfig(config) : config)
     .catch(err => {
-      console.error('[RabRPC] Initialing error:', err)
+      console.error('[RabRPC] Configuring error:', err)
       throw err
     })
   },
   shutdown () {
-    RabRPC.initialized = false
     return rabbot.shutdown()
   },
   request,
