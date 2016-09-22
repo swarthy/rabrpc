@@ -236,12 +236,12 @@ rpc.configure(config) // returns promise
 
 #### Convention
 
-| Parmeter        | Value                            | Example                        |
-| --------------- | -------------------------------- | ------------------------------ |
-| **exchange**    | pub-sub.`serviceName`          | pub-sub.foo-service-name     |
-| **queue**       | pub-sub.`serviceName`          | pub-sub.foo-service-name     |
-| **routingKey**  | `serviceName`                    | foo-service-name               |
-| **messageType** | `version`.`serviceName`.`action` | v1.foo-service-name.someAction |
+| Parmeter        | Value                            | Example                                                       |
+| --------------- | -------------------------------- | ------------------------------------------------------------- |
+| **exchange**    | pub-sub.`serviceName`            | pub-sub.foo-service-name                                      |
+| **queue**       | pub-sub.`serviceName`.uuid4      | pub-sub.foo-service-name.110ec58a-a0f2-4ac4-8393-c866d813b8d1 |
+| **routingKey**  | `serviceName`                    | foo-service-name                                              |
+| **messageType** | `version`.`serviceName`.`action` | v1.foo-service-name.someAction                                |
 
 ##### Subscribe
 ###### rpc.subscribe(messageType, handler)
