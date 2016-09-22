@@ -17,7 +17,7 @@ Another RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabb
 
 The only listed below producer/consumer patterns are implemented now:
 * [x] Request / Response
-* [ ] Publish / Subscribe
+* [x] Publish / Subscribe
 * [x] Send / Receive
 
 ## Installation
@@ -196,6 +196,98 @@ rpc.configure(config)
 ```
 
 
+
+### Publish / Subscribe
+
+#### Subscriber initialization
+
+```javascript
+const rpc = require('rabrpc') // singleton
+
+const config = {
+  connection: 'amqp://guest:guest@localhost:5672/?heartbeat=10',
+  sub: { // string or object or array of strings or objects
+    serviceName: 'foo-service-name',
+    limit: 10,
+    // ...etc
+  }
+}
+
+// somewhere in your microservice initialization cycle
+rpc.configure(config) // returns promise
+
+```
+
+#### Publisher initialization
+
+```javascript
+const rpc = require('rabrpc') // singleton
+
+const config = {
+  connection: '<URI string>', // see above
+  // pub: 'foo-service-name' | ['foo-service-name', 'bar-service-name'] | {serviceName: 'foo-service-name'} | [{serviceName: 'foo-service-name'}, {serviceName: 'bar-service-name'}]
+  pub: 'foo-service-name'
+}
+
+// somewhere in your microservice initialization cycle
+rpc.configure(config) // returns promise
+
+```
+
+#### Convention
+
+| Parmeter        | Value                            | Example                        |
+| --------------- | -------------------------------- | ------------------------------ |
+| **exchange**    | pub-sub.`serviceName`          | pub-sub.foo-service-name     |
+| **queue**       | pub-sub.`serviceName`          | pub-sub.foo-service-name     |
+| **routingKey**  | `serviceName`                    | foo-service-name               |
+| **messageType** | `version`.`serviceName`.`action` | v1.foo-service-name.someAction |
+
+##### Subscribe
+###### rpc.subscribe(messageType, handler)
+ * `messageType` - full path for service action, e.g. `'v1.images.archive'` or `'v1.statistics.synchronize'` where **second** part (`images`, `statistics`) is a serviceName specified in config (in rabbot using as type of message)
+ * `handler` - function, which takes `payload`, `actions` and `messageType`
+   * `payload` - parameter from rpc.publish
+   * `messageType` - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
+
+###### Example
+
+```javascript
+const rpc = require('rabrpc')
+
+// before initialization
+rpc.subscribe('v1.foo-service-name.someAction', (payload, actions, messageType) => {})
+
+// always auto ack
+
+// in your service initialization cycle
+rpc.configure(config)
+
+```
+
+##### Publish
+###### rpc.publish(messageType, payload, [options])
+ * `messageType` - see `rpc.respond` *messageType* argument
+ * `payload` - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
+ * `options` - rabbot publish options (will be merged with defaults: `{replyTimeout: 10000}`)
+
+returns rabbot publish `Promise` (see [Rabbot Publish](https://github.com/arobson/rabbot#publish))
+
+###### Example
+
+```javascript
+const rpc = require('rabrpc')
+
+// publish allowed only after initialization
+rpc.configure(config)
+.then(() => rpc.publish('v1.foo-service-name.someAction', 42))
+.then(() => {
+  console.log('Message published')
+})
+
+```
+
+
 ### Send / Receive
 
 #### Receiver initialization
@@ -247,7 +339,7 @@ rpc.configure(config) // returns promise
 ###### rpc.receive(messageType, handler)
  * `messageType` - full path for service action, e.g. `'v1.images.archive'` or `'v1.statistics.synchronize'` where **second** part (`images`, `statistics`) is a serviceName specified in config (in rabbot using as type of message)
  * `handler` - function, which takes `payload`, `actions` and `messageType`
-   * `payload` - parameter from rpc.request
+   * `payload` - parameter from rpc.send
    * `actions` - object with 3 functions `ack`, `nack`, `reject` (see [Rabbot Message API](https://github.com/arobson/rabbot#message-api))
    * `messageType` - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
 
