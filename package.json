@@ -27,7 +27,8 @@
     "bluebird": "^3.4.6",
     "jsend": "^1.0.2",
     "lodash": "^4.16.0",
-    "rabbot": "^1.0.6"
+    "rabbot": "^1.0.6",
+    "uuid": "^2.0.3"
   },
   "devDependencies": {
     "chai": "^3.5.0",

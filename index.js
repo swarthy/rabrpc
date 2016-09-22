@@ -7,13 +7,15 @@ const respond = require('./lib/respond')
 const send = require('./lib/send')
 const receive = require('./lib/receive')
 
+const pub = require('./lib/pub')
+const sub = require('./lib/sub')
+
 const RabRPC = {
   configure (config, transform = true) {
     return rabbot.configure(transform ? transformConfig(config) : config)
-    .catch(err => {
-      console.error('[RabRPC] Configuring error:', err)
-      throw err
-    })
+  },
+  closeAll (reset) {
+    return rabbot.closeAll(reset)
   },
   shutdown () {
     return rabbot.shutdown()
@@ -21,7 +23,9 @@ const RabRPC = {
   request,
   respond,
   send,
-  receive
+  receive,
+  pub,
+  sub
 }
 
 module.exports = RabRPC

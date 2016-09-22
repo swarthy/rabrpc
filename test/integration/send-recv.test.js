@@ -24,7 +24,6 @@ describe('integration send-recv', () => {
 
     return rpc.configure(config)
   })
-  after(() => Promise.delay(100).then(() => rpc.shutdown()))
 
   it('should handle', () => {
     return rpc.send('v1.send-recv-test-service.someAction', {a: 10, b: 5})

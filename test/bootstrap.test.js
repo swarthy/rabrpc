@@ -7,3 +7,7 @@ require('sinon-as-promised')(bluebird)
 chai.use(chaiAsPromised)
 chai.use(sinonChai)
 global.expect = chai.expect
+const Promise = require('bluebird')
+
+const rpc = require('../')
+after(() => Promise.delay(100).then(() => rpc.shutdown()))

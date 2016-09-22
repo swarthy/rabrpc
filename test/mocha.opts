@@ -1,2 +1,2 @@
 --recursive
---timeout 5s
+--timeout 50s
