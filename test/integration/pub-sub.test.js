@@ -12,12 +12,12 @@ describe('integration pub-sub', () => {
   let someAction
   before(() => {
     someAction = sinon.stub()
-    rpc.sub('v1.pub-sub-test-service.someAction', someAction)
+    rpc.subscribe('v1.pub-sub-test-service.someAction', someAction)
     return rpc.configure(config)
   })
 
   it('should handle', () => {
-    return rpc.pub('v1.pub-sub-test-service.someAction', {a: 10, b: 5})
+    return rpc.publish('v1.pub-sub-test-service.someAction', {a: 10, b: 5})
     .then(() => Promise.delay(50))
     .then(() => {
       expect(someAction).to.have.been.called

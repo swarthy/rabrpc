@@ -7,8 +7,8 @@ const respond = require('./lib/respond')
 const send = require('./lib/send')
 const receive = require('./lib/receive')
 
-const pub = require('./lib/pub')
-const sub = require('./lib/sub')
+const publish = require('./lib/pub')
+const subscribe = require('./lib/sub')
 
 const RabRPC = {
   configure (config, transform = true) {
@@ -24,8 +24,8 @@ const RabRPC = {
   respond,
   send,
   receive,
-  pub,
-  sub
+  publish,
+  subscribe
 }
 
 module.exports = RabRPC
