@@ -4,3 +4,11 @@ ignore:
     - rabbot > whistlepunk > moment:
         reason: travis-ci testing
         expires: '2017-01-09T06:07:04.805Z'
+  'npm:moment:20161019':
+    - rabbot > whistlepunk > moment:
+        reason: travis-ci testing... again...
+        expires: '2016-12-18T20:30:21.584Z'
+patch:
+  'npm:moment:20160126':
+    - rabbot > whistlepunk > moment:
+        patched: '2016-11-18T20:28:59.500Z'
