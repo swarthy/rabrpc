@@ -1,7 +1,10 @@
-version: v1.5.2
+version: v1.5.0
 ignore:
   'npm:moment:20160126':
     - rabbot > whistlepunk > moment:
         reason: travis-ci testing
         expires: '2016-10-09T06:07:04.805Z'
-patch: {}
+patch:
+  'npm:moment:20160126':
+    - rabbot > whistlepunk > moment:
+        patched: '2016-11-18T20:18:12.768Z'

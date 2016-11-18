@@ -8,7 +8,9 @@
     "test": "snyk test && eslint . && npm run test-unit && npm run test-integration",
     "test-unit": "mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
     "test-integration": "mocha \"test/bootstrap.test.js\" \"test/integration/**/*.test.js\"",
-    "coverage": "istanbul cover _mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\""
+    "coverage": "istanbul cover _mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [
     "rabbitmq",
@@ -28,7 +30,8 @@
     "jsend": "^1.0.2",
     "lodash": "^4.16.0",
     "rabbot": "^1.0.6",
-    "uuid": "^2.0.3"
+    "uuid": "^2.0.3",
+    "snyk": "^1.19.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -39,7 +42,7 @@
     "mocha": "^3.0.2",
     "sinon": "^1.17.6",
     "sinon-as-promised": "^4.0.2",
-    "sinon-chai": "^2.8.0",
-    "snyk": "^1.19.1"
-  }
+    "sinon-chai": "^2.8.0"
+  },
+  "snyk": true
 }
