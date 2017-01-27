@@ -4,7 +4,7 @@ const sinon = require('sinon')
 
 const config = {
   connection: {},
-  send: {serviceName: 'send-recv-test-service', replyTimeout: 30000, autoDelete: true}, // exchange config
+  send: {serviceName: 'send-recv-test-service', publishTimeout: 2000, replyTimeout: 2000, autoDelete: true}, // exchange config
   recv: {serviceName: 'send-recv-test-service', noBatch: true, autoDelete: true} // queue config
 }
 
@@ -22,8 +22,10 @@ describe('integration send-recv', () => {
     rpc.receive('v1.send-recv-test-service.someAction', someAction)
     rpc.receive('v1.send-recv-test-service.errorAction', errorAction)
 
-    return rpc.configure(config)
+    return rpc.configure(config).then(() => console.log('configured send-recv'))
   })
+
+  after(() => rpc.shutdown())
 
   it('should handle', () => {
     return rpc.send('v1.send-recv-test-service.someAction', {a: 10, b: 5})

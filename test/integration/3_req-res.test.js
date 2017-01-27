@@ -3,7 +3,7 @@ const sinon = require('sinon')
 
 const config = {
   connection: {},
-  req: {serviceName: 'req-res-test-service', publishTimeout: 2000, autoDelete: true}, // exchange config
+  req: {serviceName: 'req-res-test-service', publishTimeout: 2000, replyTimeout: 2000, autoDelete: true}, // exchange config
   res: {serviceName: 'req-res-test-service', noBatch: true, autoDelete: true} // queue config
 }
 
@@ -26,8 +26,10 @@ describe('integration req-res', () => {
     rpc.respond('v1.req-res-test-service.div', div)
     rpc.respond('v1.req-res-test-service.make.me.some.#', drink)
 
-    return rpc.configure(config)
+    return rpc.configure(config).then(() => console.log('configured req-res'))
   })
+
+  after(() => rpc.shutdown())
 
   it('should respond with multipy result', () => {
     return rpc.request('v1.req-res-test-service.mul', {a: 10, b: 5})
