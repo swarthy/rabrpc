@@ -31,12 +31,12 @@
     "lodash": "^4.17.4",
     "rabbot": "^1.0.8",
     "uuid": "^3.0.1",
-    "snyk": "^1.24.5"
+    "snyk": "^1.24.6"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
-    "eslint": "^3.14.0",
+    "eslint": "^3.14.1",
     "eslint-config-inclusive": "^1.0.3",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
