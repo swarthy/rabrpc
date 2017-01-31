@@ -27,11 +27,12 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.4.7",
+    "es6-error": "^4.0.1",
     "jsend": "^1.0.2",
     "lodash": "^4.17.4",
     "rabbot": "^1.0.8",
-    "uuid": "^3.0.1",
-    "snyk": "^1.24.6"
+    "snyk": "^1.24.6",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

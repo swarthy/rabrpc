@@ -1,5 +1,7 @@
+const Promise = require('bluebird')
 const rabbot = require('rabbot')
 const transformConfig = require('./lib/transformConfig')
+const errors = require('./lib/errors')
 
 const request = require('./lib/request')
 const respond = require('./lib/respond')
@@ -12,13 +14,23 @@ const subscribe = require('./lib/sub')
 
 const RabRPC = {
   configure (config, transform = true) {
-    return rabbot.configure(transform ? transformConfig(config) : config)
+    const rabbotConfig = transform ? transformConfig(config) : config
+    return Promise.resolve(rabbot.configure(rabbotConfig))
+    .tap(() => { this.initialized = true })
+    .catch(error => {
+      this.initialized = false
+      if (typeof error === 'string') {
+        throw new errors.RabRPCError(error)
+      } else {
+        throw error
+      }
+    })
   },
   closeAll (reset) {
-    return rabbot.closeAll(reset)
+    return Promise.resolve(this.initialized ? rabbot.closeAll(reset) : undefined)
   },
   shutdown () {
-    return rabbot.shutdown()
+    return Promise.resolve(this.initialized ? rabbot.shutdown() : undefined)
   },
   request,
   respond,
@@ -29,3 +41,4 @@ const RabRPC = {
 }
 
 module.exports = RabRPC
+module.exports.errors = errors
