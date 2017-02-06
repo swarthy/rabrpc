@@ -27,10 +27,18 @@ const RabRPC = {
     })
   },
   closeAll (reset) {
-    return Promise.resolve(this.initialized ? rabbot.closeAll(reset) : undefined)
+    if (this.initialized) {
+      this.initialized = false
+      return rabbot.closeAll(reset)
+    }
+    return Promise.resolve()
   },
   shutdown () {
-    return Promise.resolve(this.initialized ? rabbot.shutdown() : undefined)
+    if (this.initialized) {
+      this.initialized = false
+      return rabbot.shutdown()
+    }
+    return Promise.resolve()
   },
   request,
   respond,
