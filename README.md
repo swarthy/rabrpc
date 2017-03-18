@@ -23,6 +23,8 @@ The only listed below producer/consumer patterns are implemented now:
 ## Installation
 ```bash
 npm install --save rabrpc
+# or
+yarn add rabrpc
 ```
 
 ## Examples
