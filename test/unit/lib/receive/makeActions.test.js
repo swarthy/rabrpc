@@ -2,7 +2,7 @@ const sinon = require('sinon')
 
 const makeActions = require('../../../../lib/receive/makeActions')
 
-describe('makeActions', () => {
+describe('receive makeActions', () => {
   let message
   beforeEach(() => {
     message = {

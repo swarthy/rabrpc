@@ -2,7 +2,7 @@ const responseHandler = require('../../../../lib/request/responseHandler')
 
 const sinon = require('sinon')
 
-describe('responseHandler', () => {
+describe('request responseHandler', () => {
   let message
   beforeEach(() => {
     message = {

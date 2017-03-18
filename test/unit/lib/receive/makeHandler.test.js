@@ -11,7 +11,7 @@ const message = {
   nack: sinon.spy()
 }
 
-describe('makeHandler', () => {
+describe('receive makeHandler', () => {
   let userHandler
   let handler
   beforeEach(() => {

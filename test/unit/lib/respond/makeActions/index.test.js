@@ -1,40 +1,35 @@
 const sinon = require('sinon')
 
-const makeResponseActions = require('../../../../lib/respond/makeResponseActions')
+const makeResponseActions = require('../../../../../lib/respond/makeActions')
 
-describe('makeResponseActions', () => {
+describe('respond makeActions', () => {
   let message
+  let actions
   beforeEach(() => {
     message = {
       reply: sinon.spy()
     }
+    actions = makeResponseActions(message)
   })
   it('should process success', () => {
-    const actions = makeResponseActions(message)
     actions.success(42)
     expect(message.reply).to.have.been.calledWithMatch({status: 'success', data: 42})
   })
   it('should process fail', () => {
-    const actions = makeResponseActions(message)
     actions.fail(42)
     expect(message.reply).to.have.been.calledWithMatch({status: 'fail', data: 42})
   })
   it('should process error', () => {
-    const actions = makeResponseActions(message)
     actions.error('some message')
     expect(message.reply).to.have.been.calledWithMatch({status: 'error', message: 'some message'})
-
+  })
+  it('should not process error without message', () => {
     expect(() => actions.error(new Error())).to.have.throw(/"message" must be defined when calling jsend.error/)
-
-    actions.error(new Error('SOME ERROR'))
-    expect(message.reply).to.have.been.calledWithMatch({status: 'error', message: 'SOME ERROR'})
-
+  })
+  it('should process error with code', () => {
     const errorWithCode = new Error('ERROR WITH CODE')
     errorWithCode.code = 42
     actions.error(errorWithCode)
     expect(message.reply).to.have.been.calledWithMatch({status: 'error', code: 42, message: 'ERROR WITH CODE'})
-
-    actions.error({code: 42, message: 'some message'})
-    expect(message.reply).to.have.been.calledWithMatch({status: 'error', code: 42, message: 'some message'})
   })
 })

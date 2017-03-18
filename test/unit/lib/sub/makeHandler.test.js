@@ -10,7 +10,7 @@ const message = {
   ack: sinon.spy()
 }
 
-describe('makeHandler', () => {
+describe('subscribe makeHandler', () => {
   let userHandler
   let handler
   beforeEach(() => {

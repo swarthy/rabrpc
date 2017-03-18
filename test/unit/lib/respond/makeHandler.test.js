@@ -10,7 +10,7 @@ const message = {
   reply: sinon.spy()
 }
 
-describe('makeHandler', () => {
+describe('respond makeHandler', () => {
   let userHandler
   let handler
   beforeEach(() => {
