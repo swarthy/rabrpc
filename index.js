@@ -1,7 +1,9 @@
 const Promise = require('bluebird')
 const rabbot = require('rabbot')
 const transformConfig = require('./lib/transformConfig')
+
 const errors = require('./lib/errors')
+const RabRPCError = require('./lib/errors/RabRPCError')
 
 const debug = require('debug')('rabrpc')
 
@@ -25,7 +27,7 @@ const RabRPC = {
       this.initialized = false
       debug('initialization error:', error)
       if (typeof error === 'string') {
-        throw new errors.RabRPCError(error)
+        throw new RabRPCError(error)
       } else {
         throw error
       }
