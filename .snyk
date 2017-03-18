@@ -3,11 +3,11 @@ ignore:
   'npm:moment:20160126':
     - rabbot > whistlepunk > moment:
         reason: No updates
-        expires: '2017-04-17T13:59:41.069Z'
+        expires: '2017-04-17T16:07:31.329Z'
   'npm:moment:20161019':
     - rabbot > whistlepunk > moment:
         reason: No updates
-        expires: '2017-04-17T13:59:41.069Z'
+        expires: '2017-04-17T16:07:31.330Z'
 patch:
   'npm:moment:20160126':
     - rabbot > whistlepunk > moment:
