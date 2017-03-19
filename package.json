@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "preversion": "npm test",
-    "test": "snyk test && eslint . && npm run test-unit && npm run test-integration",
+    "test": "snyk test && eslint . && npm run mocha",
+    "mocha": "npm run test-unit && npm run test-integration",
     "test-unit": "mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
     "test-unit-watch": "mocha --watch \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
     "test-integration": "mocha \"test/bootstrap.test.js\" \"test/integration/**/*.test.js\"",

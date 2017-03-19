@@ -1,9 +1,17 @@
 const rpc = require('../../index')
 const sinon = require('sinon')
 
-const config = {
-  connection: {},
-  req: {serviceName: 'req-res-test-service', publishTimeout: 2000, replyTimeout: 2000, autoDelete: true}, // exchange config
+const configRequest = {
+  connection: {
+    name: 'request-connection'
+  },
+  req: {serviceName: 'req-res-test-service', publishTimeout: 2000, replyTimeout: 2000} // exchange config
+}
+
+const configResponse = {
+  connection: {
+    name: 'response-connection'
+  },
   res: {serviceName: 'req-res-test-service', noBatch: true, autoDelete: true} // queue config
 }
 
@@ -26,13 +34,16 @@ describe('integration req-res', () => {
     rpc.respond('v1.req-res-test-service.div', div)
     rpc.respond('v1.req-res-test-service.make.me.some.#', drink)
 
-    return rpc.configure(config).then(() => console.log('configured req-res'))
+    return Promise.all([
+      rpc.configure(configRequest),
+      rpc.configure(configResponse)
+    ])
   })
 
   after(() => rpc.shutdown())
 
   it('should respond with multipy result', () => {
-    return rpc.request('v1.req-res-test-service.mul', {a: 10, b: 5})
+    return rpc.request('v1.req-res-test-service.mul', {a: 10, b: 5}, {connectionName: 'request-connection'})
     .then(body => {
       expect(body.status).to.be.eql('success')
       expect(body.data).to.be.eql(50)
@@ -42,7 +53,7 @@ describe('integration req-res', () => {
     })
   })
   it('should respond with division result', () => {
-    return rpc.request('v1.req-res-test-service.div', {a: 100, b: 2})
+    return rpc.request('v1.req-res-test-service.div', {a: 100, b: 2}, {connectionName: 'request-connection'})
     .then(body => {
       expect(body.status).to.be.eql('success')
       expect(body.data).to.be.eql(150)
@@ -52,7 +63,7 @@ describe('integration req-res', () => {
     })
   })
   it('should respond with division fail', () => {
-    return rpc.request('v1.req-res-test-service.div', {a: 100, b: 0})
+    return rpc.request('v1.req-res-test-service.div', {a: 100, b: 0}, {connectionName: 'request-connection'})
     .then(body => {
       expect(body.status).to.be.eql('error')
       expect(body.message).to.be.eql('Division by zero')
@@ -62,7 +73,7 @@ describe('integration req-res', () => {
     })
   })
   it('should send me some tea', () => {
-    return rpc.request('v1.req-res-test-service.make.me.some.tea', 10)
+    return rpc.request('v1.req-res-test-service.make.me.some.tea', 10, {connectionName: 'request-connection'})
     .then(body => {
       expect(body.status).to.be.eql('success')
       expect(body.data).to.be.eql('Tea')

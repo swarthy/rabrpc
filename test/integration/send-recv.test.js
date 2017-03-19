@@ -2,10 +2,18 @@ const rpc = require('../../index')
 const Promise = require('bluebird')
 const sinon = require('sinon')
 
-const config = {
-  connection: {},
-  send: {serviceName: 'send-recv-test-service', publishTimeout: 2000, replyTimeout: 2000, autoDelete: true}, // exchange config
-  recv: {serviceName: 'send-recv-test-service', noBatch: true, autoDelete: true} // queue config
+const configSend = {
+  connection: {
+    name: 'send-connection'
+  },
+  send: {serviceName: 'send-recv-test-service', publishTimeout: 2000}
+}
+
+const configReceive = {
+  connection: {
+    name: 'recv-connection'
+  },
+  recv: {serviceName: 'send-recv-test-service', noBatch: true, autoDelete: true}
 }
 
 describe('integration send-recv', () => {
@@ -22,13 +30,16 @@ describe('integration send-recv', () => {
     rpc.receive('v1.send-recv-test-service.someAction', someAction)
     rpc.receive('v1.send-recv-test-service.errorAction', errorAction)
 
-    return rpc.configure(config).then(() => console.log('configured send-recv'))
+    return Promise.all([
+      rpc.configure(configSend),
+      rpc.configure(configReceive)
+    ])
   })
 
   after(() => rpc.shutdown())
 
   it('should handle', () => {
-    return rpc.send('v1.send-recv-test-service.someAction', {a: 10, b: 5})
+    return rpc.send('v1.send-recv-test-service.someAction', {a: 10, b: 5}, {connectionName: 'send-connection'})
     .then(() => Promise.delay(50))
     .then(() => {
       expect(someAction).to.have.been.called
@@ -38,7 +49,7 @@ describe('integration send-recv', () => {
 
   it('should nack message on error', () => {
     expect(errorAction).to.have.not.been.called
-    return rpc.send('v1.send-recv-test-service.errorAction', {a: 20, b: 30})
+    return rpc.send('v1.send-recv-test-service.errorAction', {a: 20, b: 30}, {connectionName: 'send-connection'})
     .then(() => Promise.delay(50))
     .then(() => {
       expect(errorAction).to.have.been.calledThrice

@@ -47,6 +47,7 @@ const RabRPC = {
       debug('shutdown: rabrpc was initialized, call rabbot.shutdown')
       this.initialized = false
       return rabbot.shutdown()
+      .then(() => rabbot.reset())
     }
     debug('shutdown: rabrpc was NOT initialized, skip')
     return Promise.resolve()

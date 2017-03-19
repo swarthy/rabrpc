@@ -51,7 +51,7 @@ describe('transformConfig', () => {
     expect(transformConfig({connection: 'zzz', send: 'test'}))
     .to.be.eql({
       connection: {uri: 'zzz', replyQueue: false},
-      exchanges: [{name: 'send-recv.test', replyTimeout: 10000, type: 'direct'}],
+      exchanges: [{name: 'send-recv.test', type: 'direct'}],
       queues: [], bindings: []
     })
   })
@@ -59,7 +59,7 @@ describe('transformConfig', () => {
     expect(transformConfig({connection: 'zzz', recv: 'test'}))
     .to.be.eql({
       connection: {uri: 'zzz', replyQueue: false},
-      exchanges: [{name: 'send-recv.test', replyTimeout: 10000, type: 'direct'}],
+      exchanges: [{name: 'send-recv.test', type: 'direct'}],
       queues: [{name: 'send-recv.test', subscribe: true}], bindings: [{
         exchange: 'send-recv.test',
         target: 'send-recv.test',
