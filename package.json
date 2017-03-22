@@ -1,6 +1,6 @@
 {
   "name": "rabrpc",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "RabbitMQ RPC Library based on Rabbot",
   "main": "index.js",
   "scripts": {
