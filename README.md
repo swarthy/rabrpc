@@ -1,5 +1,7 @@
 # RabRPC
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/swarthy/rabrpc.svg)](https://greenkeeper.io/)
+
 [![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
