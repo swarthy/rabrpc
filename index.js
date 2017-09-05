@@ -17,23 +17,25 @@ const publish = require('./lib/pub')
 const subscribe = require('./lib/sub')
 
 const RabRPC = {
-  configure (config, transform = true) {
+  configure(config, transform = true) {
     debug('rabrpc config: %j', config)
     const rabbotConfig = transform ? transformConfig(config) : config
     debug('rabbot config: %j', rabbotConfig)
     return Promise.resolve(rabbot.configure(rabbotConfig))
-    .tap(() => { this.initialized = true })
-    .catch(error => {
-      this.initialized = false
-      debug('initialization error:', error)
-      if (typeof error === 'string') {
-        throw new RabRPCError(error)
-      } else {
-        throw error
-      }
-    })
+      .tap(() => {
+        this.initialized = true
+      })
+      .catch(error => {
+        this.initialized = false
+        debug('initialization error:', error)
+        if (typeof error === 'string') {
+          throw new RabRPCError(error)
+        } else {
+          throw error
+        }
+      })
   },
-  closeAll (reset) {
+  closeAll(reset) {
     if (this.initialized) {
       debug('closeAll: rabrpc was initialized, call rabbot.closeAll')
       this.initialized = false
@@ -42,12 +44,11 @@ const RabRPC = {
     debug('closeAll: rabrpc was NOT initialized, skip')
     return Promise.resolve()
   },
-  shutdown () {
+  shutdown() {
     if (this.initialized) {
       debug('shutdown: rabrpc was initialized, call rabbot.shutdown')
       this.initialized = false
-      return rabbot.shutdown()
-      .then(() => rabbot.reset())
+      return rabbot.shutdown().then(() => rabbot.reset())
     }
     debug('shutdown: rabrpc was NOT initialized, skip')
     return Promise.resolve()

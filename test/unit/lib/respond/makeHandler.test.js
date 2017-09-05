@@ -21,28 +21,36 @@ describe('respond makeHandler', () => {
     expect(handler).to.be.fn
   })
   it('should return handler which call userHandler with payload and actions', () => {
-    return handler(message)
-    .then(() => {
+    return handler(message).then(() => {
       expect(userHandler).to.have.been.calledWithMatch(42, {}, 'messageType') // actions object
-      expect(message.reply).to.have.been.calledWithMatch({status: 'success', data: 137})
+      expect(message.reply).to.have.been.calledWithMatch({
+        status: 'success',
+        data: 137
+      })
     })
   })
   it('should catch error from userHandler and respond error', () => {
     userHandler = sinon.stub().throws(new Error('some internal error'))
     handler = makeHandler(userHandler)
     return handler(message)
-    .then(() => {
-      expect(message.reply).to.have.been.calledWithMatch({status: 'error', message: 'some internal error'})
-    })
-    .catch(err => console.error('ERROR', err))
+      .then(() => {
+        expect(message.reply).to.have.been.calledWithMatch({
+          status: 'error',
+          message: 'some internal error'
+        })
+      })
+      .catch(err => console.error('ERROR', err))
   })
   it('should catch rejected promise from userHandler and respond error', () => {
     userHandler = sinon.stub().rejects(new Error('some internal error'))
     handler = makeHandler(userHandler)
     return handler(message)
-    .then(() => {
-      expect(message.reply).to.have.been.calledWithMatch({status: 'error', message: 'some internal error'})
-    })
-    .catch(err => console.error('ERROR', err))
+      .then(() => {
+        expect(message.reply).to.have.been.calledWithMatch({
+          status: 'error',
+          message: 'some internal error'
+        })
+      })
+      .catch(err => console.error('ERROR', err))
   })
 })

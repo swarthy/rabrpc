@@ -5,7 +5,7 @@ const sinon = require('sinon')
 
 describe('request', () => {
   before(() => {
-    const mockMessage = {body: {payload: 42}, ack () {}}
+    const mockMessage = { body: { payload: 42 }, ack() {} }
     sinon.stub(rabbot, 'request').resolves(mockMessage)
     const getExchange = sinon.stub(rabbot, 'getExchange')
     getExchange.onCall(0).returns(null)
@@ -16,7 +16,9 @@ describe('request', () => {
     rabbot.getExchange.restore()
   })
   it('should throw error if exchange doest not exists', () => {
-    expect(() => rpc.request('v1.test.action', 42)).to.throw(/Exchange with name 'req-res.test' does not exist/)
+    expect(() => rpc.request('v1.test.action', 42)).to.throw(
+      /Exchange with name 'req-res.test' does not exist/
+    )
   })
   it('should call rabbot request', () => {
     rpc.request('v1.test.action', 42)
@@ -27,7 +29,7 @@ describe('request', () => {
     expect(rabbot.request).to.have.been.calledWithMatch('req-res.test', {
       routingKey: 'test',
       type: 'v1.test.action',
-      body: {payload: 42}
+      body: { payload: 42 }
     })
   })
 })

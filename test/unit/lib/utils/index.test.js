@@ -30,7 +30,9 @@ describe('utils', () => {
       utils.verifyExchange.restore()
     })
     it('should return object with exchangeName and serviceName', () => {
-      expect(utils.parseMessageType('PREFIX', 'VERSION.SERVICE_NAME.ACTION')).to.be.eql({
+      expect(
+        utils.parseMessageType('PREFIX', 'VERSION.SERVICE_NAME.ACTION')
+      ).to.be.eql({
         exchangeName: 'PREFIX.SERVICE_NAME',
         serviceName: 'SERVICE_NAME'
       })

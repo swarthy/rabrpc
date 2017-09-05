@@ -18,8 +18,8 @@ describe('respond makeActions makeReplyAction', () => {
   it('should return function', () => {
     actions.test = makeReplyAction(message, dataFormatter)
     expect(actions.test).to.be.func
-    actions.test({a: 1}, {option: 1})
-    expect(dataFormatter).to.have.been.calledWithMatch({a: 1})
-    expect(message.reply).to.have.been.calledWithMatch({a: 1}, {option: 1})
+    actions.test({ a: 1 }, { option: 1 })
+    expect(dataFormatter).to.have.been.calledWithMatch({ a: 1 })
+    expect(message.reply).to.have.been.calledWithMatch({ a: 1 }, { option: 1 })
   })
 })

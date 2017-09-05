@@ -14,7 +14,7 @@ describe('request responseHandler', () => {
     }
   })
   it('should transform message to array', () => {
-    expect(responseHandler(message)).to.be.eql({status: 'success', data: 42})
+    expect(responseHandler(message)).to.be.eql({ status: 'success', data: 42 })
     expect(message.ack).to.have.been.calledOnce
   })
 })

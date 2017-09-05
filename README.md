@@ -8,14 +8,12 @@
 
 Another RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabbot](https://github.com/arobson/rabbot))
 
-> WARNING: This project is currently in its BETA stage!
-
 ## Features
 
  * Promise-based interface (thanks [rabbot](https://github.com/arobson/rabbot))
  * Convention over configuration in exchange, queue, routingKeys naming
 
-The only listed below producer/consumer patterns are implemented now:
+Implemented producer/consumer patterns:
 * [x] Request / Response
 * [x] Publish / Subscribe
 * [x] Send / Receive

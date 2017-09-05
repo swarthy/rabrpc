@@ -6,14 +6,18 @@ const configSend = {
   connection: {
     name: 'send-connection'
   },
-  send: {serviceName: 'send-recv-test-service', publishTimeout: 2000}
+  send: { serviceName: 'send-recv-test-service', publishTimeout: 2000 }
 }
 
 const configReceive = {
   connection: {
     name: 'recv-connection'
   },
-  recv: {serviceName: 'send-recv-test-service', noBatch: true, autoDelete: true}
+  recv: {
+    serviceName: 'send-recv-test-service',
+    noBatch: true,
+    autoDelete: true
+  }
 }
 
 describe('integration send-recv', () => {
@@ -39,23 +43,49 @@ describe('integration send-recv', () => {
   after(() => rpc.shutdown())
 
   it('should handle', () => {
-    return rpc.send('v1.send-recv-test-service.someAction', {a: 10, b: 5}, {connectionName: 'send-connection'})
-    .then(() => Promise.delay(50))
-    .then(() => {
-      expect(someAction).to.have.been.called
-      expect(someAction).to.have.been.calledWithMatch({a: 10, b: 5}, {}, 'v1.send-recv-test-service.someAction')
-    })
+    return rpc
+      .send(
+        'v1.send-recv-test-service.someAction',
+        { a: 10, b: 5 },
+        { connectionName: 'send-connection' }
+      )
+      .then(() => Promise.delay(50))
+      .then(() => {
+        expect(someAction).to.have.been.called
+        expect(someAction).to.have.been.calledWithMatch(
+          { a: 10, b: 5 },
+          {},
+          'v1.send-recv-test-service.someAction'
+        )
+      })
   })
 
   it('should nack message on error', () => {
     expect(errorAction).to.have.not.been.called
-    return rpc.send('v1.send-recv-test-service.errorAction', {a: 20, b: 30}, {connectionName: 'send-connection'})
-    .then(() => Promise.delay(50))
-    .then(() => {
-      expect(errorAction).to.have.been.calledThrice
-      expect(errorAction.firstCall).to.have.been.calledWithMatch({a: 20, b: 30}, {}, 'v1.send-recv-test-service.errorAction')
-      expect(errorAction.secondCall).to.have.been.calledWithMatch({a: 20, b: 30}, {}, 'v1.send-recv-test-service.errorAction')
-      expect(errorAction.thirdCall).to.have.been.calledWithMatch({a: 20, b: 30}, {}, 'v1.send-recv-test-service.errorAction')
-    })
+    return rpc
+      .send(
+        'v1.send-recv-test-service.errorAction',
+        { a: 20, b: 30 },
+        { connectionName: 'send-connection' }
+      )
+      .then(() => Promise.delay(50))
+      .then(() => {
+        expect(errorAction).to.have.been.calledThrice
+        expect(errorAction.firstCall).to.have.been.calledWithMatch(
+          { a: 20, b: 30 },
+          {},
+          'v1.send-recv-test-service.errorAction'
+        )
+        expect(errorAction.secondCall).to.have.been.calledWithMatch(
+          { a: 20, b: 30 },
+          {},
+          'v1.send-recv-test-service.errorAction'
+        )
+        expect(errorAction.thirdCall).to.have.been.calledWithMatch(
+          { a: 20, b: 30 },
+          {},
+          'v1.send-recv-test-service.errorAction'
+        )
+      })
   })
 })
