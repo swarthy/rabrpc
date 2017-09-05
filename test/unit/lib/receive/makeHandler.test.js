@@ -4,9 +4,7 @@ const makeHandler = require('../../../../lib/receive/makeHandler')
 
 const message = {
   type: 'messageType',
-  body: {
-    payload: 42
-  },
+  body: 42,
   ack: sinon.spy(),
   nack: sinon.spy()
 }
@@ -21,7 +19,7 @@ describe('receive makeHandler', () => {
     handler = makeHandler(userHandler)
   })
   it('should return user-friendly handler', () => {
-    expect(handler).to.be.fn
+    expect(handler).to.be.a('function')
   })
   it('should return handler which call userHandler with payload and actions', () => {
     return handler(message).then(() => {

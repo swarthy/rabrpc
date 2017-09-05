@@ -5,7 +5,7 @@ const sinon = require('sinon')
 
 describe('send', () => {
   before(() => {
-    const mockMessage = { body: { payload: 42 }, ack() {} }
+    const mockMessage = { body: 42, ack() {} }
     sinon.stub(rabbot, 'publish').resolves(mockMessage)
     const getExchange = sinon.stub(rabbot, 'getExchange')
     getExchange.onCall(0).returns(null)
@@ -29,7 +29,10 @@ describe('send', () => {
     expect(rabbot.publish).to.have.been.calledWithMatch('send-recv.test', {
       routingKey: 'test',
       type: 'v1.test.action',
-      body: { payload: 42 }
+      body: 42,
+      headers: {
+        protocol: 1
+      }
     })
   })
 })

@@ -9,8 +9,8 @@ let cfg = {}
 describe('transformConfig', () => {
   beforeEach(() => {
     cfg = { exchanges: [], queues: [], bindings: [] }
-    parseExchange.reset()
-    parseQueue.reset()
+    parseExchange.resetHistory()
+    parseQueue.resetHistory()
   })
   describe('transformProducer', () => {
     it('should merge cfg and config', () => {

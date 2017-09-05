@@ -34,9 +34,13 @@ describe('integration req-res', () => {
     drink = sinon.stub()
     drink.returns('Tea')
 
+    upload = sinon.stub()
+    upload.resolves(Buffer.from([2, 2, 2]))
+
     rpc.respond('v1.req-res-test-service.mul', mul)
     rpc.respond('v1.req-res-test-service.div', div)
     rpc.respond('v1.req-res-test-service.make.me.some.#', drink)
+    rpc.respond('v1.req-res-test-service.upload', upload)
 
     return Promise.all([
       rpc.configure(configRequest),
@@ -118,6 +122,15 @@ describe('integration req-res', () => {
           {},
           'v1.req-res-test-service.make.me.some.tea'
         )
+      })
+  })
+  it.only('should send buffer', () => {
+    return rpc
+      .request('v1.req-res-test-service.upload', Buffer.from([1, 1, 1]), {
+        connectionName: 'request-connection'
+      })
+      .then(body => {
+        console.log('body', body)
       })
   })
 })

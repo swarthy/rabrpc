@@ -11,9 +11,9 @@ describe('RPC', () => {
   })
   beforeEach(() => {
     rpc.initialized = undefined
-    rabbot.configure.reset()
-    rabbot.closeAll.reset()
-    rabbot.shutdown.reset()
+    rabbot.configure.resetHistory()
+    rabbot.closeAll.resetHistory()
+    rabbot.shutdown.resetHistory()
   })
   after(() => {
     rabbot.configure.restore()
@@ -49,15 +49,9 @@ describe('RPC', () => {
     })
     it('should reject promise on error and set initialized to false', () => {
       rabbot.configure.rejects(new Error('MOCK ERROR'))
-      expect(rpc.configure({ a: 10 }, false)).to
-        .rejectedWith(/MOCK ERROR/)
+      expect(rpc.configure({ a: 10 }, false))
+        .to.rejectedWith(/MOCK ERROR/)
         .then(() => expect(rpc.initialized).to.be.false)
-        .then(() => rabbot.configure.resolves())
-    })
-    it('should transform rabbot text error into RabRPCError', () => {
-      rabbot.configure.rejects('MOCK TEXT')
-      expect(rpc.configure({}, false)).to
-        .rejectedWith(/MOCK TEXT/) // RabRPCError
         .then(() => rabbot.configure.resolves())
     })
   })

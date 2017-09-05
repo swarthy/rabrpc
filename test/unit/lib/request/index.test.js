@@ -29,7 +29,10 @@ describe('request', () => {
     expect(rabbot.request).to.have.been.calledWithMatch('req-res.test', {
       routingKey: 'test',
       type: 'v1.test.action',
-      body: { payload: 42 }
+      body: 42,
+      headers: {
+        protocol: 1
+      }
     })
   })
 })

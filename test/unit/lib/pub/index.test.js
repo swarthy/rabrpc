@@ -29,7 +29,10 @@ describe('publish', () => {
     expect(rabbot.publish).to.have.been.calledWithMatch('pub-sub.test', {
       routingKey: 'test',
       type: 'v1.test.action',
-      body: { payload: 42 }
+      body: 42,
+      headers: {
+        protocol: 1
+      }
     })
   })
 })
