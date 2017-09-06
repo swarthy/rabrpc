@@ -13,38 +13,32 @@ describe('respond makeActions', () => {
   })
   it('should process success', () => {
     actions.success(42)
-    expect(message.reply).to.have.been.calledWithMatch({
-      status: 'success',
-      data: 42
-    })
-  })
-  it('should process fail', () => {
-    actions.fail(42)
-    expect(message.reply).to.have.been.calledWithMatch({
-      status: 'fail',
-      data: 42
+    expect(message.reply).to.have.been.calledWithMatch(42, {
+      headers: {
+        status: 'success'
+      }
     })
   })
   it('should process error', () => {
     actions.error('some message')
-    expect(message.reply).to.have.been.calledWithMatch({
-      status: 'error',
-      message: 'some message'
+    expect(message.reply).to.have.been.calledWithMatch(null, {
+      headers: {
+        status: 'error',
+        code: 500,
+        message: 'some message'
+      }
     })
-  })
-  it('should not process error without message', () => {
-    expect(() => actions.error(new Error())).to.have.throw(
-      /"message" must be defined when calling jsend.error/
-    )
   })
   it('should process error with code', () => {
     const errorWithCode = new Error('ERROR WITH CODE')
     errorWithCode.code = 42
     actions.error(errorWithCode)
-    expect(message.reply).to.have.been.calledWithMatch({
-      status: 'error',
-      code: 42,
-      message: 'ERROR WITH CODE'
+    expect(message.reply).to.have.been.calledWithMatch(null, {
+      headers: {
+        status: 'error',
+        code: 42,
+        message: 'ERROR WITH CODE'
+      }
     })
   })
 })

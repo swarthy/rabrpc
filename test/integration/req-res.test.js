@@ -20,27 +20,18 @@ const configResponse = {
 }
 
 describe('integration req-res', () => {
-  let mul
-  let div
-  let drink
+  let ping
+  let error
+
   before(() => {
-    mul = sinon.stub()
-    mul.resolves(50)
+    ping = sinon.stub()
+    ping.returnsArg(0)
 
-    div = sinon.stub()
-    div.onCall(0).returns(150)
-    div.onCall(1).throws(new Error('Division by zero'))
+    error = sinon.stub()
+    error.throws(new Error('Some error'))
 
-    drink = sinon.stub()
-    drink.returns('Tea')
-
-    upload = sinon.stub()
-    upload.resolves(Buffer.from([2, 2, 2]))
-
-    rpc.respond('v1.req-res-test-service.mul', mul)
-    rpc.respond('v1.req-res-test-service.div', div)
-    rpc.respond('v1.req-res-test-service.make.me.some.#', drink)
-    rpc.respond('v1.req-res-test-service.upload', upload)
+    rpc.respond('v1.req-res-test-service.ping', ping)
+    rpc.respond('v1.req-res-test-service.error', error)
 
     return Promise.all([
       rpc.configure(configRequest),
@@ -48,89 +39,98 @@ describe('integration req-res', () => {
     ])
   })
 
+  beforeEach(() => {
+    ping.resetHistory()
+    error.resetHistory()
+  })
+
   after(() => rpc.shutdown())
 
-  it('should respond with multipy result', () => {
-    return rpc
-      .request(
-        'v1.req-res-test-service.mul',
-        { a: 10, b: 5 },
-        { connectionName: 'request-connection' }
-      )
-      .then(body => {
-        expect(body.status).to.be.eql('success')
-        expect(body.data).to.be.eql(50)
-
-        expect(mul).to.have.been.called
-        expect(mul).to.have.been.calledWithMatch(
-          { a: 10, b: 5 },
-          {},
-          'v1.req-res-test-service.mul'
-        )
-      })
-  })
-  it('should respond with division result', () => {
-    return rpc
-      .request(
-        'v1.req-res-test-service.div',
-        { a: 100, b: 2 },
-        { connectionName: 'request-connection' }
-      )
-      .then(body => {
-        expect(body.status).to.be.eql('success')
-        expect(body.data).to.be.eql(150)
-
-        expect(div).to.have.been.called
-        expect(div).to.have.been.calledWithMatch(
-          { a: 100, b: 2 },
-          {},
-          'v1.req-res-test-service.div'
-        )
-      })
-  })
-  it('should respond with division fail', () => {
-    return rpc
-      .request(
-        'v1.req-res-test-service.div',
-        { a: 100, b: 0 },
-        { connectionName: 'request-connection' }
-      )
-      .then(body => {
-        expect(body.status).to.be.eql('error')
-        expect(body.message).to.be.eql('Division by zero')
-
-        expect(div).to.have.been.called
-        expect(div).to.have.been.calledWithMatch(
-          { a: 100, b: 0 },
-          {},
-          'v1.req-res-test-service.div'
-        )
-      })
-  })
-  it('should send me some tea', () => {
-    return rpc
-      .request('v1.req-res-test-service.make.me.some.tea', 10, {
+  it('should respond with error', async () => {
+    try {
+      await rpc.request('v1.req-res-test-service.error', 'test', {
         connectionName: 'request-connection'
       })
-      .then(body => {
-        expect(body.status).to.be.eql('success')
-        expect(body.data).to.be.eql('Tea')
+    } catch (err) {
+      expect(err.message).to.be.eql('Some error')
+    }
 
-        expect(drink).to.have.been.called
-        expect(drink).to.have.been.calledWithMatch(
-          10,
-          {},
-          'v1.req-res-test-service.make.me.some.tea'
-        )
-      })
+    expect(error).to.have.been.called
   })
-  it.only('should send buffer', () => {
-    return rpc
-      .request('v1.req-res-test-service.upload', Buffer.from([1, 1, 1]), {
-        connectionName: 'request-connection'
-      })
-      .then(body => {
-        console.log('body', body)
-      })
+
+  it('should request and respond string', async () => {
+    const message = await rpc.request(
+      'v1.req-res-test-service.ping',
+      'string',
+      { connectionName: 'request-connection' },
+      true
+    )
+    expect(message.properties.headers.status).to.be.eql('success')
+    expect(message.body).to.be.eql('string')
+    expect(ping).to.be.called
+  })
+
+  it('should request and respond number', async () => {
+    const message = await rpc.request(
+      'v1.req-res-test-service.ping',
+      123,
+      { connectionName: 'request-connection' },
+      true
+    )
+    expect(message.properties.headers.status).to.be.eql('success')
+    expect(message.body).to.be.eql(123)
+    expect(ping).to.be.called
+  })
+
+  it('should request and respond object', async () => {
+    const message = await rpc.request(
+      'v1.req-res-test-service.ping',
+      { a: 5, b: null },
+      { connectionName: 'request-connection' },
+      true
+    )
+    expect(message.properties.headers.status).to.be.eql('success')
+    expect(message.body).to.be.eql({ a: 5, b: null })
+    expect(ping).to.be.called
+  })
+
+  it('should request and respond array', async () => {
+    const message = await rpc.request(
+      'v1.req-res-test-service.ping',
+      [0, null, 'a'],
+      { connectionName: 'request-connection' },
+      true
+    )
+    expect(message.properties.headers.status).to.be.eql('success')
+    expect(message.body).to.be.eql([0, null, 'a'])
+    expect(ping).to.be.called
+  })
+
+  it('should request and respond null', async () => {
+    const message = await rpc.request(
+      'v1.req-res-test-service.ping',
+      null,
+      { connectionName: 'request-connection' },
+      true
+    )
+    expect(message.properties.headers.status).to.be.eql('success')
+    expect(message.body).to.be.eql(null)
+    expect(ping).to.be.called
+  })
+
+  it('should request and respond Buffer', async () => {
+    const message = await rpc.request(
+      'v1.req-res-test-service.ping',
+      Buffer.from([1, 2]),
+      { connectionName: 'request-connection' },
+      true
+    )
+    expect(message.properties.headers.status).to.be.eql('success')
+    expect(message.body).to.be.eql(Buffer.from([1, 2]))
+    expect(ping).to.be.calledWithMatch(
+      Buffer.from([1, 2]),
+      {},
+      'v1.req-res-test-service.ping'
+    )
   })
 })

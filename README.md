@@ -6,7 +6,7 @@
 [![Code Climate][codeclimate-image]][codeclimate-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 
-Another RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabbot](https://github.com/arobson/rabbot))
+Yet another opinionated RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabbot](https://github.com/arobson/rabbot))
 
 ## Features
 
@@ -132,12 +132,13 @@ rpc.configure(config) // returns promise
 | **messageType** | `version`.`serviceName`.`action` | v1.foo-service-name.someAction |
 
 #### Response
-##### rpc.respond(messageType, handler)
+##### rpc.respond(messageType, handler, [raw = false])
  * `messageType` - full path for service action, e.g. `'v1.images.resize'` or `'v1.users.role.findAll'` where **second** part (`images`, `users`) is a serviceName specified in config (in rabbot using as type of message)
- * `handler` - function, which takes `payload`, `responseActions` and `messageType`
-   * `payload` - parameter from rpc.request
-   * `responseActions` - object with 3 functions `success`, `fail`, `error` (see [JSEND](https://github.com/Prestaul/jsend))
+ * `handler` - function, which takes `payload` or `message`, `responseActions` and `messageType`
+   * `payload` or `message` - `message` if `raw` is `true` otherwise `message.body`
+   * `responseActions` - object with 3 functions `success`, `fail`, `error`
    * `messageType` - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
+ * `raw` - if `true` then first argument for `handler` will be rabbot `message` instead `message.body` by default
 
 ###### Example
 
@@ -148,7 +149,7 @@ const rpc = require('rabrpc')
 rpc.respond('v1.foo-service-name.someAction', (payload, actions, messageType) => actions.success(payload * 2))
 
 // handler can aslo just return promise, or `.then`able or value and result will be replied with success status
-// exception or rejected promise will cause replying error (be sure throw `Error` with message (JSEND requirement))
+// exception or rejected promise will cause replying error (be sure throw `Error` with message)
 
 rpc.respond('v1.foo-service-name.anotherAction', payload => SomeDB.query({/* ... */}).then(rows => ({count: rows.count, data: rows})))
 rpc.respond('v1.foo-service-name.thirdAction', payload => payload * 2)
@@ -172,14 +173,15 @@ rpc.configure(config)
 
 ```
 
-#### Request
-##### rpc.request(messageType, payload, [options])
+##### Request
+###### rpc.request(messageType, payload, [options], [raw = false])
  * `messageType` - see `rpc.respond` *messageType* argument
- * `payload` - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
+ * `payload` - payload data, which will passed into respond handler (see [supported payload](#supported-payload))
  * `options` - rabbot request options (will be merged with defaults: `{replyTimeout: 10000}`)
+ * `raw` - resolve rabbot reply `message` instead of `message.body`
 
-returns `Promise`, which resolved with `body` - JSEND formated response 
- * `body` JSEND formated response (see [JSEND](https://github.com/Prestaul/jsend))
+returns `Promise`, which resolved with `body` (or `message` if `raw` is `true`)
+ * `body` or `message`
 
 ###### Example
 
@@ -244,11 +246,12 @@ rpc.configure(config) // returns promise
 | **messageType** | `version`.`serviceName`.`action` | v1.foo-service-name.someAction                                |
 
 ##### Subscribe
-###### rpc.subscribe(messageType, handler)
+###### rpc.subscribe(messageType, handler, [raw = false])
  * `messageType` - full path for service action, e.g. `'v1.images.archive'` or `'v1.statistics.synchronize'` where **second** part (`images`, `statistics`) is a serviceName specified in config (in rabbot using as type of message)
- * `handler` - function, which takes `payload`, `actions` and `messageType`
-   * `payload` - parameter from rpc.publish
+ * `handler` - function, which takes `payload` or `message`, `actions` and `messageType`
+   * `payload` or `message` - `message` if `raw` is `true` otherwise `message.body`
    * `messageType` - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
+ * `raw` - if `true` then first argument for `handler` will be rabbot `message` instead `message.body` by default
 
 ###### Example
 
@@ -268,7 +271,7 @@ rpc.configure(config)
 ##### Publish
 ###### rpc.publish(messageType, payload, [options])
  * `messageType` - see `rpc.respond` *messageType* argument
- * `payload` - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
+ * `payload` - payload data, which will passed into respond handler (see [supported payload](#supported-payload))
  * `options` - rabbot publish options (will be merged with defaults: `{replyTimeout: 10000}`)
 
 returns rabbot publish `Promise` (see [Rabbot Publish](https://github.com/arobson/rabbot#publish))
@@ -336,12 +339,13 @@ rpc.configure(config) // returns promise
 | **messageType** | `version`.`serviceName`.`action` | v1.foo-service-name.someAction |
 
 ##### Receive
-###### rpc.receive(messageType, handler)
+###### rpc.receive(messageType, handler, [raw = false])
  * `messageType` - full path for service action, e.g. `'v1.images.archive'` or `'v1.statistics.synchronize'` where **second** part (`images`, `statistics`) is a serviceName specified in config (in rabbot using as type of message)
  * `handler` - function, which takes `payload`, `actions` and `messageType`
-   * `payload` - parameter from rpc.send
+   * `payload` or `message` - `message` if `raw` is `true` otherwise `message.body`
    * `actions` - object with 3 functions `ack`, `nack`, `reject` (see [Rabbot Message API](https://github.com/arobson/rabbot#message-api))
    * `messageType` - type of rabbot message (usefull when listening for types, which contain `*` or `#`)
+ * `raw` - if `true` then first argument for `handler` will be rabbot `message` instead `message.body` by default
 
 ###### Example
 
@@ -358,7 +362,7 @@ rpc.receive('v1.foo-service-name.anotherAction', payload => SomeDB.query({/* ...
 
 rpc.receive('v1.foo-service-name.someResource.*', (payload, actions, messageType) => {
   // you can manually ack message if you don't need default behaviuor
-  actions.ack() // DOES NOT RETURN PROMISE
+  actions.ack() // DO NOT RETURNS PROMISE
   const [version, serviceName, resource, actionName] = messageType.split('.')
   switch (actionName) {
     case 'find':
@@ -380,7 +384,7 @@ rpc.configure(config)
 ##### Send
 ###### rpc.send(messageType, payload, [options])
  * `messageType` - see `rpc.respond` *messageType* argument
- * `payload` - payload data, which will passed into respond handler (see above) (can be any JSON serializable value)
+ * `payload` - payload data, which will passed into respond handler (see [supported payload](#supported-payload))
  * `options` - rabbot publish options (will be merged with defaults: `{replyTimeout: 10000}`)
 
 returns rabbot publish `Promise` (see [Rabbot Publish](https://github.com/arobson/rabbot#publish))
@@ -398,6 +402,13 @@ rpc.configure(config)
 })
 
 ```
+
+### Supported payload
+ * `string`
+ * `number`
+ * `null`
+ * JSON serializable `Object`
+ * `Buffer`
 
 [npm-image]: https://img.shields.io/npm/v/rabrpc.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/rabrpc

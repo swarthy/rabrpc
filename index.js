@@ -7,6 +7,8 @@ const RabRPCError = require('./lib/errors/RabRPCError')
 
 const debug = require('debug')('rabrpc')
 
+const initializeSerializers = require('./lib/serializers')
+
 const request = require('./lib/request')
 const respond = require('./lib/respond')
 
@@ -15,6 +17,8 @@ const receive = require('./lib/receive')
 
 const publish = require('./lib/pub')
 const subscribe = require('./lib/sub')
+
+initializeSerializers(rabbot)
 
 const RabRPC = {
   configure(config, transform = true) {

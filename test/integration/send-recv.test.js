@@ -40,52 +40,122 @@ describe('integration send-recv', () => {
     ])
   })
 
-  after(() => rpc.shutdown())
-
-  it('should handle', () => {
-    return rpc
-      .send(
-        'v1.send-recv-test-service.someAction',
-        { a: 10, b: 5 },
-        { connectionName: 'send-connection' }
-      )
-      .then(() => Promise.delay(50))
-      .then(() => {
-        expect(someAction).to.have.been.called
-        expect(someAction).to.have.been.calledWithMatch(
-          { a: 10, b: 5 },
-          {},
-          'v1.send-recv-test-service.someAction'
-        )
-      })
+  beforeEach(() => {
+    someAction.resetHistory()
   })
 
-  it('should nack message on error', () => {
+  after(() => rpc.shutdown())
+
+  it('should nack message on error', async () => {
     expect(errorAction).to.have.not.been.called
-    return rpc
-      .send(
-        'v1.send-recv-test-service.errorAction',
-        { a: 20, b: 30 },
-        { connectionName: 'send-connection' }
-      )
-      .then(() => Promise.delay(50))
-      .then(() => {
-        expect(errorAction).to.have.been.calledThrice
-        expect(errorAction.firstCall).to.have.been.calledWithMatch(
-          { a: 20, b: 30 },
-          {},
-          'v1.send-recv-test-service.errorAction'
-        )
-        expect(errorAction.secondCall).to.have.been.calledWithMatch(
-          { a: 20, b: 30 },
-          {},
-          'v1.send-recv-test-service.errorAction'
-        )
-        expect(errorAction.thirdCall).to.have.been.calledWithMatch(
-          { a: 20, b: 30 },
-          {},
-          'v1.send-recv-test-service.errorAction'
-        )
-      })
+    await rpc.send(
+      'v1.send-recv-test-service.errorAction',
+      { a: 20, b: 30 },
+      { connectionName: 'send-connection' }
+    )
+    await Promise.delay(50)
+
+    expect(errorAction).to.have.been.calledThrice
+    expect(errorAction.firstCall).to.have.been.calledWithMatch(
+      { a: 20, b: 30 },
+      {},
+      'v1.send-recv-test-service.errorAction'
+    )
+    expect(errorAction.secondCall).to.have.been.calledWithMatch(
+      { a: 20, b: 30 },
+      {},
+      'v1.send-recv-test-service.errorAction'
+    )
+    expect(errorAction.thirdCall).to.have.been.calledWithMatch(
+      { a: 20, b: 30 },
+      {},
+      'v1.send-recv-test-service.errorAction'
+    )
+  })
+
+  it('should send string', async () => {
+    await rpc.send('v1.send-recv-test-service.someAction', 'string', {
+      connectionName: 'send-connection'
+    })
+    await Promise.delay(50)
+    expect(someAction).to.have.been.called
+    expect(someAction).to.have.been.calledWithMatch(
+      'string',
+      {},
+      'v1.send-recv-test-service.someAction'
+    )
+  })
+
+  it('should send number', async () => {
+    await rpc.send('v1.send-recv-test-service.someAction', 123, {
+      connectionName: 'send-connection'
+    })
+    await Promise.delay(50)
+    expect(someAction).to.have.been.called
+    expect(someAction).to.have.been.calledWithMatch(
+      123,
+      {},
+      'v1.send-recv-test-service.someAction'
+    )
+  })
+
+  it('should send object', async () => {
+    await rpc.send(
+      'v1.send-recv-test-service.someAction',
+      { a: 5, b: null },
+      {
+        connectionName: 'send-connection'
+      }
+    )
+    await Promise.delay(50)
+    expect(someAction).to.have.been.called
+    expect(someAction).to.have.been.calledWithMatch(
+      { a: 5, b: null },
+      {},
+      'v1.send-recv-test-service.someAction'
+    )
+  })
+
+  it('should send array', async () => {
+    await rpc.send('v1.send-recv-test-service.someAction', [0, null, 'a'], {
+      connectionName: 'send-connection'
+    })
+    await Promise.delay(50)
+    expect(someAction).to.have.been.called
+    expect(someAction).to.have.been.calledWithMatch(
+      [0, null, 'a'],
+      {},
+      'v1.send-recv-test-service.someAction'
+    )
+  })
+
+  it('should send null', async () => {
+    await rpc.send('v1.send-recv-test-service.someAction', null, {
+      connectionName: 'send-connection'
+    })
+    await Promise.delay(50)
+    expect(someAction).to.have.been.called
+    expect(someAction).to.have.been.calledWithMatch(
+      null,
+      {},
+      'v1.send-recv-test-service.someAction'
+    )
+  })
+
+  it('should send Buffer', async () => {
+    await rpc.send(
+      'v1.send-recv-test-service.someAction',
+      Buffer.from([1, 2]),
+      {
+        connectionName: 'send-connection'
+      }
+    )
+    await Promise.delay(50)
+    expect(someAction).to.have.been.called
+    expect(someAction).to.have.been.calledWithMatch(
+      Buffer.from([1, 2]),
+      {},
+      'v1.send-recv-test-service.someAction'
+    )
   })
 })

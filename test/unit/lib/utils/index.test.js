@@ -38,4 +38,21 @@ describe('utils', () => {
       })
     })
   })
+  describe('getContentType', () => {
+    it('should return application/null for null', () => {
+      expect(utils.getContentType(null)).to.be.eql('application/null')
+    })
+    it('should return application/number for number', () => {
+      expect(utils.getContentType(0)).to.be.eql('application/number')
+      expect(utils.getContentType(1)).to.be.eql('application/number')
+      expect(utils.getContentType(1.1)).to.be.eql('application/number')
+      expect(utils.getContentType(Number.NaN)).to.be.eql()
+      expect(utils.getContentType(Number.POSITIVE_INFINITY)).to.be.eql()
+    })
+    it('should return application/json for array', () => {
+      expect(utils.getContentType([])).to.be.eql('application/json')
+      expect(utils.getContentType([1, 2])).to.be.eql('application/json')
+      expect(utils.getContentType(['a', 'b'])).to.be.eql('application/json')
+    })
+  })
 })
