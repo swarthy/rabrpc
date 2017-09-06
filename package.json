@@ -1,6 +1,6 @@
 {
   "name": "rabrpc",
-  "version": "0.1.14",
+  "version": "1.0.0",
   "description": "RabbitMQ RPC Library based on Rabbot",
   "main": "index.js",
   "scripts": {
@@ -8,13 +8,17 @@
     "test": "eslint . && npm run mocha",
     "mocha": "npm run test-unit && npm run test-integration",
     "test-unit": "mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
-    "test-integration":
-      "mocha \"test/bootstrap.test.js\" \"test/integration/**/*.test.js\"",
-    "coverage":
-      "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test-integration": "mocha \"test/bootstrap.test.js\" \"test/integration/**/*.test.js\"",
+    "coverage": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "snyk-protect": "snyk protect"
   },
-  "keywords": ["rabbitmq", "microservice", "pubsub", "reqres", "rpc"],
+  "keywords": [
+    "rabbitmq",
+    "microservice",
+    "pubsub",
+    "reqres",
+    "rpc"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:swarthy/rabrpc.git"
