@@ -4,6 +4,7 @@ node_js:
   - 8
 services:
   - rabbitmq
+after_success: 'npm run coveralls'
 cache: yarn
 matrix:
   fast_finish: true

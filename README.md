@@ -3,6 +3,7 @@
 [![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
+[![Coverage Status](coverate-image)][coverage-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 
@@ -420,3 +421,5 @@ rpc.configure(config)
 [codeclimate-url]: https://codeclimate.com/github/swarthy/rabrpc
 [snyk-image]: https://snyk.io/test/npm/rabrpc/badge.svg
 [snyk-url]: https://snyk.io/test/npm/rabrpc
+[coverage-image]: https://coveralls.io/repos/swarthy/rabrpc/badge.svg?branch=master
+[coverage-url]: https://coveralls.io/r/swarthy/rabrpc?branch=master

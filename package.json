@@ -8,17 +8,13 @@
     "test": "eslint . && npm run mocha",
     "mocha": "npm run test-unit && npm run test-integration",
     "test-unit": "mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
-    "test-integration": "mocha \"test/bootstrap.test.js\" \"test/integration/**/*.test.js\"",
-    "coverage": "istanbul cover _mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
+    "test-integration":
+      "mocha \"test/bootstrap.test.js\" \"test/integration/**/*.test.js\"",
+    "coverage":
+      "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "snyk-protect": "snyk protect"
   },
-  "keywords": [
-    "rabbitmq",
-    "microservice",
-    "pubsub",
-    "reqres",
-    "rpc"
-  ],
+  "keywords": ["rabbitmq", "microservice", "pubsub", "reqres", "rpc"],
   "repository": {
     "type": "git",
     "url": "git@github.com:swarthy/rabrpc.git"
@@ -36,6 +32,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "coveralls": "^2.13.1",
     "eslint": "^4.6.1",
     "eslint-config-inclusive": "^1.0.9",
     "istanbul": "^0.4.5",
