@@ -53,7 +53,7 @@ describe('integration send-recv', () => {
       { a: 20, b: 30 },
       { connectionName: 'send-connection' }
     )
-    await Promise.delay(50)
+    await Promise.delay(100)
 
     expect(errorAction).to.have.been.calledThrice
     expect(errorAction.firstCall).to.have.been.calledWithMatch(
@@ -77,7 +77,7 @@ describe('integration send-recv', () => {
     await rpc.send('v1.send-recv-test-service.someAction', 'string', {
       connectionName: 'send-connection'
     })
-    await Promise.delay(50)
+    await Promise.delay(100)
     expect(someAction).to.have.been.called
     expect(someAction).to.have.been.calledWithMatch(
       'string',
@@ -90,7 +90,7 @@ describe('integration send-recv', () => {
     await rpc.send('v1.send-recv-test-service.someAction', 123, {
       connectionName: 'send-connection'
     })
-    await Promise.delay(50)
+    await Promise.delay(100)
     expect(someAction).to.have.been.called
     expect(someAction).to.have.been.calledWithMatch(
       123,
@@ -107,7 +107,7 @@ describe('integration send-recv', () => {
         connectionName: 'send-connection'
       }
     )
-    await Promise.delay(50)
+    await Promise.delay(100)
     expect(someAction).to.have.been.called
     expect(someAction).to.have.been.calledWithMatch(
       { a: 5, b: null },
@@ -120,7 +120,7 @@ describe('integration send-recv', () => {
     await rpc.send('v1.send-recv-test-service.someAction', [0, null, 'a'], {
       connectionName: 'send-connection'
     })
-    await Promise.delay(50)
+    await Promise.delay(100)
     expect(someAction).to.have.been.called
     expect(someAction).to.have.been.calledWithMatch(
       [0, null, 'a'],
@@ -133,7 +133,7 @@ describe('integration send-recv', () => {
     await rpc.send('v1.send-recv-test-service.someAction', null, {
       connectionName: 'send-connection'
     })
-    await Promise.delay(50)
+    await Promise.delay(100)
     expect(someAction).to.have.been.called
     expect(someAction).to.have.been.calledWithMatch(
       null,
@@ -150,7 +150,7 @@ describe('integration send-recv', () => {
         connectionName: 'send-connection'
       }
     )
-    await Promise.delay(50)
+    await Promise.delay(100)
     expect(someAction).to.have.been.called
     expect(someAction).to.have.been.calledWithMatch(
       Buffer.from([1, 2]),
