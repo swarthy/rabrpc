@@ -9,6 +9,10 @@ const message = {
   nack: sinon.spy()
 }
 
+const singleton = {
+  initialized: true
+}
+
 describe('receive makeHandler', () => {
   let userHandler
   let handler
@@ -19,8 +23,8 @@ describe('receive makeHandler', () => {
 
     message.ack.reset()
     message.nack.reset()
-    handler = makeHandler(userHandler)
-    messageHandler = makeHandler(userHandler, true)
+    handler = makeHandler.call(singleton, userHandler)
+    messageHandler = makeHandler.call(singleton, userHandler, true)
   })
   it('should return user-friendly handler', () => {
     expect(handler).to.be.a('function')
@@ -40,14 +44,14 @@ describe('receive makeHandler', () => {
   })
   it('should catch error from userHandler and nack message', async () => {
     userHandler = sinon.stub().throws(new Error('some internal error'))
-    handler = makeHandler(userHandler)
+    handler = makeHandler.call(singleton, userHandler)
     await handler(message)
     expect(message.ack).to.have.not.been.called
     expect(message.nack).to.have.been.called
   })
   it('should catch rejected promise from userHandler and nack message', async () => {
     userHandler = sinon.stub().rejects(new Error('some internal error'))
-    handler = makeHandler(userHandler)
+    handler = makeHandler.call(singleton, userHandler)
     await handler(message)
     expect(message.ack).to.have.not.been.called
     expect(message.nack).to.have.been.called

@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const rabbot = require('rabbot')
 const transformConfig = require('./lib/transformConfig')
 
@@ -7,7 +6,8 @@ const RabRPCError = require('./lib/errors/RabRPCError')
 
 const debug = require('debug')('rabrpc')
 
-const initializeSerializers = require('./lib/serializers')
+const addSerializers = require('./lib/serializers')
+addSerializers(rabbot)
 
 const request = require('./lib/request')
 const respond = require('./lib/respond')
@@ -18,52 +18,53 @@ const receive = require('./lib/receive')
 const publish = require('./lib/pub')
 const subscribe = require('./lib/sub')
 
-initializeSerializers(rabbot)
-
-const RabRPC = {
-  configure(config, transform = true) {
+class RabRPC {
+  constructor() {
+    this.request = request
+    this.respond = respond
+    this.send = send
+    this.receive = receive
+    this.publish = publish
+    this.subscribe = subscribe
+    this.initialized = false
+  }
+  async configure(config, transform = true) {
     debug('rabrpc config: %j', config)
     const rabbotConfig = transform ? transformConfig(config) : config
     debug('rabbot config: %j', rabbotConfig)
-    return Promise.resolve(rabbot.configure(rabbotConfig))
-      .tap(() => {
-        this.initialized = true
-      })
-      .catch(error => {
-        this.initialized = false
-        debug('initialization error:', error)
-        if (typeof error === 'string') {
-          throw new RabRPCError(error)
-        } else {
-          throw error
-        }
-      })
-  },
-  closeAll(reset) {
+    try {
+      await rabbot.configure(rabbotConfig)
+      this.initialized = true
+    } catch (error) {
+      this.initialized = false
+      debug('initialization error:', error)
+      if (typeof error === 'string') {
+        throw new RabRPCError(error)
+      } else {
+        throw error
+      }
+    }
+  }
+  async closeAll(reset) {
     if (this.initialized) {
       debug('closeAll: rabrpc was initialized, call rabbot.closeAll')
       this.initialized = false
-      return rabbot.closeAll(reset)
+      return await rabbot.closeAll(reset)
     }
     debug('closeAll: rabrpc was NOT initialized, skip')
-    return Promise.resolve()
-  },
-  shutdown() {
+  }
+  async shutdown() {
     if (this.initialized) {
       debug('shutdown: rabrpc was initialized, call rabbot.shutdown')
       this.initialized = false
-      return rabbot.shutdown().then(() => rabbot.reset())
+      await rabbot.shutdown()
+      await rabbot.reset()
     }
     debug('shutdown: rabrpc was NOT initialized, skip')
-    return Promise.resolve()
-  },
-  request,
-  respond,
-  send,
-  receive,
-  publish,
-  subscribe
+  }
 }
 
-module.exports = RabRPC
+const rabrpc = new RabRPC()
+
+module.exports = rabrpc
 module.exports.errors = errors

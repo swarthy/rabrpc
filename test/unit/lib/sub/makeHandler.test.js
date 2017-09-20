@@ -8,6 +8,10 @@ const message = {
   ack: sinon.spy()
 }
 
+const singleton = {
+  initialized: true
+}
+
 describe('subscribe makeHandler', () => {
   let userHandler
   let handler
@@ -15,8 +19,8 @@ describe('subscribe makeHandler', () => {
   beforeEach(() => {
     userHandler = sinon.stub().returns(137)
     message.ack.reset()
-    handler = makeHandler(userHandler)
-    messageHandler = makeHandler(userHandler, true)
+    handler = makeHandler.call(singleton, userHandler)
+    messageHandler = makeHandler.call(singleton, userHandler, true)
   })
   it('should return user-friendly handler', () => {
     expect(handler).to.be.a('function')
