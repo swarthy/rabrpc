@@ -3,13 +3,14 @@ const sinon = require('sinon')
 const makeResponseActions = require('../../../../../lib/respond/makeActions')
 
 describe('respond makeActions', () => {
+  const rabrpc = { initialized: true }
   let message
   let actions
   beforeEach(() => {
     message = {
       reply: sinon.spy()
     }
-    actions = makeResponseActions(message)
+    actions = makeResponseActions(rabrpc, message)
   })
   it('should process success', () => {
     actions.success(42)
