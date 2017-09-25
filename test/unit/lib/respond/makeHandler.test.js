@@ -3,8 +3,22 @@ const sinon = require('sinon')
 const makeHandler = require('../../../../lib/respond/makeHandler')
 
 const message = {
+  properties: {
+    headers: {
+      protocol: 1
+    }
+  },
   type: 'messageType',
   body: 42,
+  reply: sinon.spy()
+}
+
+const oldMessage = {
+  properties: {
+    headers: {}
+  },
+  type: 'messageType',
+  body: { payload: 42 },
   reply: sinon.spy()
 }
 
@@ -21,6 +35,7 @@ describe('respond makeHandler', () => {
     handler = makeHandler.call(singleton, userHandler)
     messageHandler = makeHandler.call(singleton, userHandler, true)
     message.reply.reset()
+    oldMessage.reply.reset()
   })
   it('should return user-friendly handler', () => {
     expect(handler).to.be.a('function')
@@ -30,6 +45,15 @@ describe('respond makeHandler', () => {
     await handler(message)
     expect(userHandler).to.have.been.calledWithMatch(42, {}, 'messageType') // actions object
     expect(message.reply).to.have.been.calledWithMatch(137, {
+      headers: {
+        status: 'success'
+      }
+    })
+  })
+  it('should return handler which call userHandler with payload and actions (version 0 compatibility)', async () => {
+    await handler(oldMessage)
+    expect(userHandler).to.have.been.calledWithMatch(42, {}, 'messageType') // actions object
+    expect(oldMessage.reply).to.have.been.calledWithMatch(137, {
       headers: {
         status: 'success'
       }
