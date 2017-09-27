@@ -10,7 +10,8 @@
     "test-unit": "mocha \"test/bootstrap.test.js\" \"test/unit/**/*.test.js\"",
     "test-integration": "mocha \"test/bootstrap.test.js\" \"test/integration/**/*.test.js\"",
     "coveralls": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "snyk-protect": "snyk protect"
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [
     "rabbitmq",
