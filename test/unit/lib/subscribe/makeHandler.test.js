@@ -1,6 +1,6 @@
 const sinon = require('sinon')
 
-const makeHandler = require('../../../../lib/sub/makeHandler')
+const makeHandler = require('../../../../lib/subscribe/makeHandler')
 
 const message = {
   properties: {
