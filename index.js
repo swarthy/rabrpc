@@ -15,56 +15,43 @@ const respond = require('./lib/respond')
 const send = require('./lib/send')
 const receive = require('./lib/receive')
 
-const publish = require('./lib/pub')
-const subscribe = require('./lib/sub')
+const publish = require('./lib/publish')
+const subscribe = require('./lib/subscribe')
 
-class RabRPC {
-  constructor() {
-    this.request = request
-    this.respond = respond
-    this.send = send
-    this.receive = receive
-    this.publish = publish
-    this.subscribe = subscribe
-    this.initialized = false
-  }
-  async configure(config, transform = true) {
-    debug('rabrpc config: %j', config)
-    const rabbotConfig = transform ? transformConfig(config) : config
-    debug('rabbot config: %j', rabbotConfig)
-    try {
-      await rabbot.configure(rabbotConfig)
-      this.initialized = true
-    } catch (error) {
-      this.initialized = false
-      debug('initialization error:', error)
-      if (typeof error === 'string') {
-        throw new RabRPCError(error)
-      } else {
-        throw error
-      }
-    }
-  }
-  async closeAll(reset) {
-    if (this.initialized) {
-      debug('closeAll: rabrpc was initialized, call rabbot.closeAll')
-      this.initialized = false
-      return await rabbot.closeAll(reset)
-    }
-    debug('closeAll: rabrpc was NOT initialized, skip')
-  }
-  async shutdown() {
-    if (this.initialized) {
-      debug('shutdown: rabrpc was initialized, call rabbot.shutdown')
-      this.initialized = false
-      await rabbot.shutdown()
-      await rabbot.reset()
-    }
-    debug('shutdown: rabrpc was NOT initialized, skip')
-  }
+function onUnreachable() {
+  throw new RabRPCError(
+    'Connection failures have reached the limit, no further attempts will be made'
+  )
 }
 
-const rabrpc = new RabRPC()
+rabbot.on('unreachable', onUnreachable)
 
-module.exports = rabrpc
-module.exports.errors = errors
+function configure(config, transform = true) {
+  debug('configuring')
+  debug('rabrpc config: %j', config)
+  const rabbotConfig = transform ? transformConfig(config) : config
+  debug('rabbot config: %j', rabbotConfig)
+  return rabbot.configure(rabbotConfig)
+}
+
+async function shutdown() {
+  debug('shutdown')
+  await rabbot.shutdown()
+  await rabbot.reset()
+}
+
+const RabRPC = {
+  errors,
+
+  configure,
+  shutdown,
+
+  request,
+  respond,
+  send,
+  receive,
+  publish,
+  subscribe
+}
+
+module.exports = RabRPC

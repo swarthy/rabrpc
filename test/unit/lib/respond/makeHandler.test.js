@@ -22,18 +22,14 @@ const oldMessage = {
   reply: sinon.spy()
 }
 
-const singleton = {
-  initialized: true
-}
-
 describe('respond makeHandler', () => {
   let userHandler
   let handler
   let messageHandler
   beforeEach(() => {
     userHandler = sinon.stub().returns(137)
-    handler = makeHandler.call(singleton, userHandler)
-    messageHandler = makeHandler.call(singleton, userHandler, true)
+    handler = makeHandler(userHandler)
+    messageHandler = makeHandler(userHandler, true)
     message.reply.reset()
     oldMessage.reply.reset()
   })
@@ -70,7 +66,7 @@ describe('respond makeHandler', () => {
   })
   it('should catch error from userHandler and respond error', async () => {
     userHandler = sinon.stub().throws(new Error('some internal error'))
-    handler = makeHandler.call(singleton, userHandler)
+    handler = makeHandler(userHandler)
     await handler(message)
     expect(message.reply).to.have.been.calledWithMatch(null, {
       headers: {
@@ -82,7 +78,7 @@ describe('respond makeHandler', () => {
   })
   it('should catch rejected promise from userHandler and respond error', async () => {
     userHandler = sinon.stub().rejects(new Error('some internal error'))
-    handler = makeHandler.call(singleton, userHandler)
+    handler = makeHandler(userHandler)
     await handler(message)
     expect(message.reply).to.have.been.calledWithMatch(null, {
       headers: {
