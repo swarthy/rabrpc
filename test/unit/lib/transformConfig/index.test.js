@@ -96,4 +96,24 @@ describe('transformConfig', () => {
       transformConfig({ connection: 'zzz', recv: ['test'] })
     )
   })
+  it('should add config name from connection if needed', () => {
+    expect(transformConfig({ connection: { name: 'test' } })).to.be.eql({
+      name: 'test',
+      connection: { name: 'test', replyQueue: false },
+      bindings: [],
+      exchanges: [],
+      queues: []
+    })
+  })
+  it('should pass specified config name', () => {
+    expect(
+      transformConfig({ connection: { name: 'test' }, name: 'abcd' })
+    ).to.be.eql({
+      name: 'abcd',
+      connection: { name: 'test', replyQueue: false },
+      bindings: [],
+      exchanges: [],
+      queues: []
+    })
+  })
 })
