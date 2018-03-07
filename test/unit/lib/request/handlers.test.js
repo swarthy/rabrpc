@@ -26,8 +26,8 @@ describe('request handlers', () => {
     ack: sinon.spy()
   }
   beforeEach(() => {
-    message.ack.reset()
-    errorMessage.ack.reset()
+    message.ack.resetHistory()
+    errorMessage.ack.resetHistory()
   })
   describe('bodyResponseHandler', () => {
     it('should return message body', () => {

@@ -36,10 +36,10 @@ describe('receive makeHandler', () => {
     userHandler = sinon.stub()
     userHandler.returns(137)
 
-    message.ack.reset()
-    message.nack.reset()
-    oldMessage.ack.reset()
-    oldMessage.nack.reset()
+    message.ack.resetHistory()
+    message.nack.resetHistory()
+    oldMessage.ack.resetHistory()
+    oldMessage.nack.resetHistory()
 
     handler = makeHandler.call(singleton, userHandler)
     messageHandler = makeHandler.call(singleton, userHandler, true)

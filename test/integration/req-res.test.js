@@ -40,8 +40,8 @@ describe('integration req-res', () => {
   })
 
   beforeEach(() => {
-    ping.resetHistory()
-    error.resetHistory()
+    ping.resetHistoryHistory()
+    error.resetHistoryHistory()
   })
 
   after(() => rpc.shutdown())

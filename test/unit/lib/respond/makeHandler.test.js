@@ -30,8 +30,8 @@ describe('respond makeHandler', () => {
     userHandler = sinon.stub().returns(137)
     handler = makeHandler(userHandler)
     messageHandler = makeHandler(userHandler, true)
-    message.reply.reset()
-    oldMessage.reply.reset()
+    message.reply.resetHistory()
+    oldMessage.reply.resetHistory()
   })
   it('should return user-friendly handler', () => {
     expect(handler).to.be.a('function')

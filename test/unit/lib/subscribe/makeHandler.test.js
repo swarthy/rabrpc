@@ -32,8 +32,8 @@ describe('subscribe makeHandler', () => {
   let messageHandler
   beforeEach(() => {
     userHandler = sinon.stub().returns(137)
-    message.ack.reset()
-    oldMessage.ack.reset()
+    message.ack.resetHistory()
+    oldMessage.ack.resetHistory()
     handler = makeHandler.call(singleton, userHandler)
     messageHandler = makeHandler.call(singleton, userHandler, true)
   })

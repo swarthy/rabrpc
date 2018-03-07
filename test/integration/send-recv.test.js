@@ -41,7 +41,7 @@ describe('integration send-recv', () => {
   })
 
   beforeEach(() => {
-    someAction.resetHistory()
+    someAction.resetHistoryHistory()
   })
 
   after(() => rpc.shutdown())
