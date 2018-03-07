@@ -28,7 +28,7 @@ describe('integration pub-sub', () => {
   })
 
   beforeEach(() => {
-    someAction.resetHistoryHistory()
+    someAction.resetHistory()
   })
 
   after(() => rpc.shutdown())
