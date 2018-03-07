@@ -13,7 +13,7 @@ const configSubscribe = {
   connection: {
     name: 'subscribe-connection'
   },
-  sub: { serviceName: 'pub-sub-test-service', noBatch: true, autoDelete: true }
+  sub: { serviceName: 'pub-sub-test-service', noBatch: true }
 }
 
 describe('integration pub-sub', () => {
@@ -101,5 +101,14 @@ describe('integration pub-sub', () => {
       Buffer.from([1, 2]),
       'v1.pub-sub-test-service.someAction'
     )
+  })
+
+  it('should stop consume messages after stopSubscription', async () => {
+    rpc.stopSubscription()
+    await rpc.publish('v1.pub-sub-test-service.someAction', 123, {
+      connectionName: 'publish-connection'
+    })
+    await Promise.delay(100)
+    expect(someAction).to.have.not.been.called
   })
 })

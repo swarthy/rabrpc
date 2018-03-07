@@ -158,4 +158,13 @@ describe('integration send-recv', () => {
       'v1.send-recv-test-service.someAction'
     )
   })
+
+  it('should stop consume messages after stopSubscription', async () => {
+    rpc.stopSubscription()
+    await rpc.send('v1.send-recv-test-service.someAction', 123, {
+      connectionName: 'send-connection'
+    })
+    await Promise.delay(100)
+    expect(someAction).to.have.not.been.called
+  })
 })

@@ -26,12 +26,12 @@ function onUnreachable() {
 
 rabbot.on('unreachable', onUnreachable)
 
-function configure(config, transform = true) {
+async function configure(config, transform = true) {
   debug('configuring')
   debug('rabrpc config: %j', config)
   const rabbotConfig = transform ? transformConfig(config) : config
   debug('rabbot config: %j', rabbotConfig)
-  return rabbot.configure(rabbotConfig)
+  return await rabbot.configure(rabbotConfig)
 }
 
 async function shutdown() {
@@ -40,10 +40,28 @@ async function shutdown() {
   await rabbot.reset()
 }
 
+async function stopSubscription() {
+  debug('stopSubscription')
+  const configNames = Object.keys(rabbot.configurations)
+  configNames.forEach(configName => {
+    const config = rabbot.configurations[configName]
+    config.queues.forEach(queue => {
+      debug(
+        'stopSubscription config: "%s", queue: "%s"',
+        configName,
+        queue.name
+      )
+      const connectionName = config.connection.name
+      rabbot.stopSubscription(queue.name, connectionName)
+    })
+  })
+}
+
 const RabRPC = {
   errors,
 
   configure,
+  stopSubscription,
   shutdown,
 
   request,

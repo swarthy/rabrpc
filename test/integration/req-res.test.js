@@ -7,8 +7,8 @@ const configRequest = {
   },
   req: {
     serviceName: 'req-res-test-service',
-    publishTimeout: 2000,
-    replyTimeout: 2000
+    publishTimeout: 1000,
+    replyTimeout: 1000
   } // exchange config
 }
 
@@ -132,5 +132,21 @@ describe('integration req-res', () => {
       {},
       'v1.req-res-test-service.ping'
     )
+  })
+
+  it('should stop consume messages after stopSubscription', async () => {
+    rpc.stopSubscription()
+    error
+    try {
+      await rpc.request('v1.req-res-test-service.ping', 'test', {
+        connectionName: 'request-connection'
+      })
+    } catch (err) {
+      error = err
+    }
+    expect(error.message).to.match(
+      /No reply received within the configured timeout/
+    )
+    expect(ping).to.have.not.been.called
   })
 })
