@@ -10,7 +10,7 @@ describe('respond', () => {
   after(() => {
     rabbot.handle.restore()
   })
-  it('should call rabbot request', () => {
+  it('should call rabbot handle', () => {
     rpc.respond('v1.test.action', () => {})
     expect(rabbot.handle).to.have.been.calledOnce
   })

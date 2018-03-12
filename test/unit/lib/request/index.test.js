@@ -5,7 +5,11 @@ const sinon = require('sinon')
 
 describe('request', () => {
   before(() => {
-    const mockMessage = { body: { payload: 42 }, ack() {} }
+    const mockMessage = {
+      body: { payload: 42 },
+      ack() {},
+      properties: { headers: {} }
+    }
     sinon.stub(rabbot, 'request').resolves(mockMessage)
     const getExchange = sinon.stub(rabbot, 'getExchange')
     getExchange.onCall(0).returns(null)
