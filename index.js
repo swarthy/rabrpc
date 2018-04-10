@@ -38,6 +38,7 @@ async function shutdown() {
   debug('shutdown')
   await rabbot.shutdown()
   await rabbot.reset()
+  removeHandlers()
 }
 
 async function stopSubscription() {
@@ -55,21 +56,46 @@ async function stopSubscription() {
       rabbot.stopSubscription(queue.name, connectionName)
     })
   })
+  removeHandlers()
 }
+
+function removeHandlers() {
+  debug('removeHandlers')
+  let sub
+  while ((sub = subscriptions.pop())) {
+    debug('remove handler', sub)
+    sub.remove()
+  }
+}
+
+const subscriptions = []
 
 const RabRPC = {
   errors,
 
   configure,
   stopSubscription,
+  removeHandlers,
   shutdown,
 
   request,
-  respond,
+  respond() {
+    const sub = respond.apply(this, arguments)
+    subscriptions.push(sub)
+    return sub
+  },
   send,
-  receive,
+  receive() {
+    const sub = receive.apply(this, arguments)
+    subscriptions.push(sub)
+    return sub
+  },
   publish,
-  subscribe
+  subscribe() {
+    const sub = subscribe.apply(this, arguments)
+    subscriptions.push(sub)
+    return sub
+  }
 }
 
 module.exports = RabRPC
