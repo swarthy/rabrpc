@@ -136,7 +136,7 @@ describe('integration req-res', () => {
 
   it('should stop consume messages after stopSubscription', async () => {
     rpc.stopSubscription()
-    error
+    let error
     try {
       await rpc.request('v1.req-res-test-service.ping', 'test', {
         connectionName: 'request-connection'
