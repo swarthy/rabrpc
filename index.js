@@ -41,7 +41,7 @@ async function shutdown() {
   removeHandlers()
 }
 
-async function stopSubscription() {
+function stopSubscription() {
   debug('stopSubscription')
   const configNames = Object.keys(rabbot.configurations)
   configNames.forEach(configName => {
