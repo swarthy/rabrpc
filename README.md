@@ -7,6 +7,9 @@
 [![Code Climate][codeclimate-image]][codeclimate-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 
+> ## Long story short
+> If you control your app lifecycle, better use [amqplib](https://www.npmjs.com/package/amqplib). And don't use queue message broker for pubslish/subscribe.
+
 Yet another opinionated RPC library based on [RabbitMQ](http://www.rabbitmq.com/) (through [rabbot](https://github.com/arobson/rabbot))
 
 ## Features
