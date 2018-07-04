@@ -1,4 +1,6 @@
-version: v1.5.2
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.12.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:moment:20160126':
     - rabbot > whistlepunk > moment:
@@ -12,7 +14,13 @@ ignore:
     - snyk > request > qs:
         reason: None given
         expires: '2017-04-17T17:07:20.753Z'
+# patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:moment:20160126':
     - rabbot > whistlepunk > moment:
         patched: '2016-11-18T20:28:59.500Z'
+  'npm:lodash:20180130':
+    - rabbot > machina > lodash:
+        patched: '2018-07-04T23:09:51.978Z'
+    - rabbot > monologue.js > lodash:
+        patched: '2018-07-04T23:09:51.978Z'
